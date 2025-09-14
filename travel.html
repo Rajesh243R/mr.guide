@@ -1,0 +1,3411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Incredible India Tours App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="India Tours">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiSW5jcmVkaWJsZSBJbmRpYSBUb3VycyIsInNob3J0X25hbWUiOiJJbmRpYVRvdXJzIiwic3RhcnRfdXJsIjoiLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmZmZmYiLCJ0aGVtZV9jb2xvciI6IiM2NjdlZWEiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lpSUhacFpYZENiM2c5SWpBZ01DQXhNamdnTVRJNElpQm1hV3hzUFNJak5qWTNaV1ZoSWlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpUGp4eVpXTjBJSGRwWkhSb1BTSXhNamdpSUdobGFXZG9kRDBpTVRJNElpQm1hV3hzUFNJak5qWTNaV1ZoSWk4K1BIUmxlSFFnZUQwaU5qUWlJSGs5SWpZMElpQm1hV3hzUFNJamRHaDBaU0lnWm05dWRDMXphWHBsUFNJME1DSWdkR1Y0ZEMxaGJtTm9iM0k5SW0xcFpHUnNaU0krOEorUXJ6d3ZkR1Y0ZEQ0OEwzTjJaejQ9IiwidHlwZSI6ImltYWdlL3N2Zyt4bWwiLCJzaXplcyI6IjEyOHgxMjgifV19">
+    
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+        }
+        .region-card {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+        }
+        .north-card {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .south-card {
+            background: linear-gradient(45deg, #43e97b 0%, #38f9d7 100%);
+        }
+        .east-card {
+            background: linear-gradient(45deg, #fa709a 0%, #fee140 100%);
+        }
+        .west-card {
+            background: linear-gradient(45deg, #a8edea 0%, #fed6e3 100%);
+        }
+        .hero-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .place-image {
+            height: 150px;
+            object-fit: cover;
+            border-radius: 0.75rem 0.75rem 0 0;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            z-index: 50;
+        }
+        .app-container {
+            padding-bottom: 80px;
+        }
+        .status-bar {
+            height: env(safe-area-inset-top);
+            background: #667eea;
+        }
+        .swipe-container {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .swipe-item {
+            scroll-snap-align: start;
+            flex-shrink: 0;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #f59e0b;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            z-index: 100;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        .offline-indicator.show {
+            transform: translateY(0);
+        }
+        @media (max-width: 640px) {
+            .mobile-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Status Bar -->
+    <div class="status-bar"></div>
+    
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator">
+        📱 App is running offline
+    </div>
+
+    <!-- App Header -->
+    <header class="gradient-bg text-white py-4 shadow-lg sticky top-0 z-40">
+        <div class="px-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <button id="backBtn" onclick="goBack()" class="mr-3 p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors hidden">
+                        ←
+                    </button>
+                    <h1 id="headerTitle" class="text-xl font-bold cursor-pointer" onclick="goHome()">🇮🇳 India Tours</h1>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button id="notificationBtn" onclick="toggleNotifications()" class="relative p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors">
+                        🔔
+                        <span id="notificationBadge" class="notification-badge hidden">1</span>
+                    </button>
+                    <button id="menuBtn" onclick="toggleMenu()" class="p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors">
+                        ☰
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Side Menu -->
+    <div id="sideMenu" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="fixed right-0 top-0 h-full w-80 bg-white shadow-lg transform translate-x-full transition-transform duration-300" id="menuPanel">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Menu</h3>
+                    <button onclick="toggleMenu()" class="text-2xl">×</button>
+                </div>
+                <div class="space-y-4">
+                    <button onclick="goHome(); toggleMenu();" class="w-full text-left p-3 rounded-lg hover:bg-gray-100">🏠 Home</button>
+                    <button onclick="showProfile(); toggleMenu();" class="w-full text-left p-3 rounded-lg hover:bg-gray-100">👤 Profile</button>
+                    <button onclick="showBookings(); toggleMenu();" class="w-full text-left p-3 rounded-lg hover:bg-gray-100">📋 My Bookings</button>
+                    <button onclick="showSettings(); toggleMenu();" class="w-full text-left p-3 rounded-lg hover:bg-gray-100">⚙️ Settings</button>
+                    <hr>
+                    <button onclick="installApp(); toggleMenu();" class="w-full text-left p-3 rounded-lg hover:bg-gray-100">📱 Install App</button>
+                    <button onclick="logout(); toggleMenu();" class="w-full text-left p-3 rounded-lg hover:bg-gray-100 text-red-600">🚪 Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="app-container">
+        
+        <!-- Location Selection Page -->
+        <div id="locationPage" class="page p-4">
+            <div class="max-w-sm mx-auto bg-white rounded-xl shadow-lg p-6 mt-8">
+                <div class="text-center mb-6">
+                    <div class="text-6xl mb-4">📍</div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Select Your Location</h2>
+                    <p class="text-gray-600">We need your location to calculate accurate travel costs and provide personalized recommendations</p>
+                </div>
+                
+                <div class="space-y-3 mb-6">
+                    <select id="stateSelect" onchange="updateCities()" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500">
+                        <option value="">Select Your State</option>
+                        <option value="maharashtra">Maharashtra</option>
+                        <option value="delhi">Delhi</option>
+                        <option value="karnataka">Karnataka</option>
+                        <option value="tamil_nadu">Tamil Nadu</option>
+                        <option value="gujarat">Gujarat</option>
+                        <option value="rajasthan">Rajasthan</option>
+                        <option value="west_bengal">West Bengal</option>
+                        <option value="uttar_pradesh">Uttar Pradesh</option>
+                        <option value="kerala">Kerala</option>
+                        <option value="punjab">Punjab</option>
+                        <option value="haryana">Haryana</option>
+                        <option value="bihar">Bihar</option>
+                        <option value="odisha">Odisha</option>
+                        <option value="assam">Assam</option>
+                        <option value="telangana">Telangana</option>
+                        <option value="andhra_pradesh">Andhra Pradesh</option>
+                    </select>
+                    
+                    <select id="citySelect" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500">
+                        <option value="">Select Your City</option>
+                    </select>
+                </div>
+                
+                <button onclick="confirmLocation()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-lg font-bold hover:from-purple-600 hover:to-pink-600 transition-all">
+                    Continue to Home
+                </button>
+            </div>
+        </div>
+
+        <!-- Login Page -->
+        <div id="loginPage" class="page hidden p-4">
+            <div class="max-w-sm mx-auto bg-white rounded-xl shadow-lg p-6 mt-8">
+                <div class="text-center mb-6">
+                    <div class="text-6xl mb-4">🇮🇳</div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back!</h2>
+                    <p class="text-gray-600">Sign in to continue your journey</p>
+                </div>
+                
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                        <input type="email" id="loginEmail" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500" placeholder="Enter your email">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <input type="password" id="loginPassword" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500" placeholder="Enter your password">
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-lg font-bold hover:from-purple-600 hover:to-pink-600 transition-all">
+                        Sign In
+                    </button>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="text-gray-600">Don't have an account? 
+                        <button onclick="showRegister()" class="text-purple-600 hover:text-purple-800 font-semibold">Register</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Page -->
+        <div id="registerPage" class="page hidden p-4">
+            <div class="max-w-sm mx-auto bg-white rounded-xl shadow-lg p-6 mt-8">
+                <div class="text-center mb-6">
+                    <div class="text-6xl mb-4">🇮🇳</div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Join Us!</h2>
+                    <p class="text-gray-600">Create your account</p>
+                </div>
+                
+                <form onsubmit="handleRegister(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+                        <input type="text" id="registerName" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500" placeholder="Enter your name">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                        <input type="email" id="registerEmail" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500" placeholder="Enter your email">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Phone</label>
+                        <input type="tel" id="registerPhone" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500" placeholder="Enter your phone">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                        <input type="password" id="registerPassword" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500" placeholder="Create password">
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 px-6 rounded-lg font-bold hover:from-green-600 hover:to-blue-600 transition-all">
+                        Create Account
+                    </button>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="text-gray-600">Have an account? 
+                        <button onclick="showLogin()" class="text-purple-600 hover:text-purple-800 font-semibold">Login</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Page -->
+        <div id="homePage" class="page hidden p-4">
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-lg shadow text-center">
+                    <div class="text-2xl font-bold text-purple-600">500+</div>
+                    <div class="text-sm text-gray-600">Destinations</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow text-center">
+                    <div class="text-2xl font-bold text-green-600">50K+</div>
+                    <div class="text-sm text-gray-600">Happy Travelers</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow text-center">
+                    <div class="text-2xl font-bold text-blue-600">4.8★</div>
+                    <div class="text-sm text-gray-600">Rating</div>
+                </div>
+            </div>
+
+            <!-- Featured Destinations Carousel -->
+            <div class="mb-6">
+                <h3 class="text-xl font-bold mb-3">Featured Destinations</h3>
+                <div class="swipe-container flex space-x-4 pb-2">
+                    <div class="swipe-item w-64 bg-white rounded-lg shadow overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1564507592333-c60657eea523?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Taj Mahal" class="w-full h-32 object-cover" onerror="this.style.display='none';">
+                        <div class="p-3">
+                            <h4 class="font-bold">Taj Mahal</h4>
+                            <p class="text-sm text-gray-600">Wonder of the World</p>
+                        </div>
+                    </div>
+                    <div class="swipe-item w-64 bg-white rounded-lg shadow overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Kerala Backwaters" class="w-full h-32 object-cover" onerror="this.style.display='none';">
+                        <div class="p-3">
+                            <h4 class="font-bold">Kerala Backwaters</h4>
+                            <p class="text-sm text-gray-600">Serene Waters</p>
+                        </div>
+                    </div>
+                    <div class="swipe-item w-64 bg-white rounded-lg shadow overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Gateway of India" class="w-full h-32 object-cover" onerror="this.style.display='none';">
+                        <div class="p-3">
+                            <h4 class="font-bold">Gateway of India</h4>
+                            <p class="text-sm text-gray-600">Iconic Monument</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regions Grid -->
+            <div class="mb-6">
+                <h3 class="text-xl font-bold mb-3">Explore by Region</h3>
+                <div class="grid mobile-grid gap-4">
+                    <div class="north-card text-white p-6 rounded-xl card-hover cursor-pointer" onclick="checkLoginAndProceed('north')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🏔️</div>
+                            <h3 class="text-lg font-bold mb-1">North India</h3>
+                            <p class="text-sm opacity-90">Himalayas & Heritage</p>
+                        </div>
+                    </div>
+
+                    <div class="south-card text-white p-6 rounded-xl card-hover cursor-pointer" onclick="checkLoginAndProceed('south')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🌴</div>
+                            <h3 class="text-lg font-bold mb-1">South India</h3>
+                            <p class="text-sm opacity-90">Beaches & Temples</p>
+                        </div>
+                    </div>
+
+                    <div class="east-card text-white p-6 rounded-xl card-hover cursor-pointer" onclick="checkLoginAndProceed('east')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🌅</div>
+                            <h3 class="text-lg font-bold mb-1">East India</h3>
+                            <p class="text-sm opacity-90">Culture & Nature</p>
+                        </div>
+                    </div>
+
+                    <div class="west-card text-white p-6 rounded-xl card-hover cursor-pointer" onclick="checkLoginAndProceed('west')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🏖️</div>
+                            <h3 class="text-lg font-bold mb-1">West India</h3>
+                            <p class="text-sm opacity-90">Deserts & Cities</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Region Places Page -->
+        <div id="regionPage" class="page hidden p-4">
+            <h2 id="regionTitle" class="text-2xl font-bold text-gray-800 mb-4"></h2>
+            <div id="placesGrid" class="grid mobile-grid gap-4">
+                <!-- Places will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Place Details Page -->
+        <div id="placeDetailsPage" class="page hidden p-4">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+                <img id="placeDetailImage" src="" alt="" class="w-full h-64 object-cover" onerror="this.style.display='none';">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 id="placeDetailName" class="text-2xl font-bold text-gray-800"></h2>
+                        <div class="flex items-center">
+                            <span class="text-yellow-500 text-lg">★</span>
+                            <span id="placeRating" class="text-lg font-bold ml-1">4.5</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center text-gray-600 mb-4">
+                        <span class="text-lg mr-2">📍</span>
+                        <span id="placeLocation" class="text-lg"></span>
+                    </div>
+                    
+                    <p id="placeDescription" class="text-gray-700 mb-6 leading-relaxed"></p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-blue-50 p-4 rounded-lg text-center">
+                            <div class="text-2xl mb-2">🌡️</div>
+                            <div class="text-sm text-gray-600">Best Time</div>
+                            <div id="bestTime" class="font-bold">Oct - Mar</div>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg text-center">
+                            <div class="text-2xl mb-2">⏱️</div>
+                            <div class="text-sm text-gray-600">Duration</div>
+                            <div id="recommendedDays" class="font-bold">2-3 Days</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-bold mb-3">🎯 Top Attractions</h3>
+                        <div id="topAttractions" class="flex flex-wrap gap-2">
+                            <!-- Attractions will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-bold mb-3">🍽️ Famous Food</h3>
+                        <div id="famousFood" class="flex flex-wrap gap-2">
+                            <!-- Food items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-bold mb-3">💡 Travel Tips</h3>
+                        <div id="travelTips" class="space-y-2">
+                            <!-- Tips will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <button onclick="proceedToTravel()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-lg font-bold hover:from-purple-600 hover:to-pink-600 transition-all">
+                        Plan Your Trip Here 🚀
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Travel Options Page -->
+        <div id="travelPage" class="page hidden p-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Choose Travel Mode</h2>
+            <p id="selectedPlace" class="text-lg text-gray-600 mb-6"></p>
+            
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded-xl shadow-lg card-hover cursor-pointer flex items-center" onclick="selectTravel('flight')">
+                    <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Flight" class="w-16 h-16 object-cover rounded-lg mr-4" onerror="this.style.display='none';">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold">✈️ Flight</h3>
+                        <p class="text-gray-600">Fast & Comfortable</p>
+                        <div class="text-xl font-bold text-blue-600">₹8,000 - ₹15,000</div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-lg card-hover cursor-pointer flex items-center" onclick="selectTravel('train')">
+                    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Train" class="w-16 h-16 object-cover rounded-lg mr-4" onerror="this.style.display='none';">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold">🚂 Train</h3>
+                        <p class="text-gray-600">Scenic & Affordable</p>
+                        <div class="text-xl font-bold text-green-600">₹2,000 - ₹5,000</div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-lg card-hover cursor-pointer flex items-center" onclick="selectTravel('bus')">
+                    <img src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Bus" class="w-16 h-16 object-cover rounded-lg mr-4" onerror="this.style.display='none';">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold">🚌 Bus</h3>
+                        <p class="text-gray-600">Budget Friendly</p>
+                        <div class="text-xl font-bold text-purple-600">₹800 - ₹2,500</div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-gray-500 to-gray-700 text-white p-4 rounded-xl shadow-lg card-hover cursor-pointer flex items-center" onclick="skipTransport()">
+                    <div class="w-16 h-16 bg-white bg-opacity-20 rounded-lg mr-4 flex items-center justify-center">
+                        <span class="text-2xl">🚗</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold">Own Transport</h3>
+                        <p class="text-gray-200">Skip transport booking</p>
+                        <div class="text-xl font-bold text-yellow-300">Free</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Duration Selection Page -->
+        <div id="durationPage" class="page hidden p-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Select Stay Duration</h2>
+            <p id="selectedTravelInfo" class="text-lg text-gray-600 mb-6"></p>
+            
+            <div class="space-y-4">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-700 text-white p-6 rounded-xl shadow-lg card-hover cursor-pointer" onclick="selectDuration(2)">
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🌅</div>
+                        <h3 class="text-xl font-bold mb-2">Weekend Getaway</h3>
+                        <p class="text-lg opacity-90 mb-2">2 Days / 1 Night</p>
+                        <p class="text-sm opacity-80">Perfect for quick trips</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-green-500 to-green-700 text-white p-6 rounded-xl shadow-lg card-hover cursor-pointer" onclick="selectDuration(4)">
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🏖️</div>
+                        <h3 class="text-xl font-bold mb-2">Short Vacation</h3>
+                        <p class="text-lg opacity-90 mb-2">4 Days / 3 Nights</p>
+                        <p class="text-sm opacity-80">Ideal for exploration</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-purple-500 to-purple-700 text-white p-6 rounded-xl shadow-lg card-hover cursor-pointer" onclick="selectDuration(7)">
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🌴</div>
+                        <h3 class="text-xl font-bold mb-2">Extended Holiday</h3>
+                        <p class="text-lg opacity-90 mb-2">7 Days / 6 Nights</p>
+                        <p class="text-sm opacity-80">Complete experience</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-orange-500 to-red-600 text-white p-6 rounded-xl shadow-lg card-hover cursor-pointer" onclick="selectDuration(10)">
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🏔️</div>
+                        <h3 class="text-xl font-bold mb-2">Long Journey</h3>
+                        <p class="text-lg opacity-90 mb-2">10 Days / 9 Nights</p>
+                        <p class="text-sm opacity-80">Deep exploration</p>
+                    </div>
+                </div>
+
+                <div class="bg-white border-2 border-dashed border-gray-300 p-6 rounded-xl shadow-lg card-hover cursor-pointer" onclick="showCustomDuration()">
+                    <div class="text-center text-gray-600">
+                        <div class="text-4xl mb-2">📅</div>
+                        <h3 class="text-xl font-bold mb-2">Custom Duration</h3>
+                        <p class="text-lg mb-2">Choose your own dates</p>
+                        <p class="text-sm">Flexible planning</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Duration Page -->
+        <div id="customDurationPage" class="page hidden p-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Custom Duration</h2>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Check-in Date</label>
+                        <input type="date" id="checkinDate" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Check-out Date</label>
+                        <input type="date" id="checkoutDate" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500">
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Total Days:</span>
+                            <span id="totalDays" class="font-bold text-lg">0</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-gray-600">Total Nights:</span>
+                            <span id="totalNights" class="font-bold text-lg">0</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="confirmCustomDuration()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-lg font-bold hover:from-purple-600 hover:to-pink-600 transition-all">
+                        Confirm Duration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hotels Page -->
+        <div id="hotelsPage" class="page hidden p-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Select Hotel Category</h2>
+            <p id="selectedTravel" class="text-lg text-gray-600 mb-6"></p>
+            
+            <div class="space-y-4">
+                <div class="bg-gradient-to-br from-yellow-400 to-yellow-600 text-white rounded-xl shadow-lg card-hover cursor-pointer overflow-hidden" onclick="selectHotel('7star')">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Luxury Hotel" class="w-full h-32 object-cover" onerror="this.style.display='none';">
+                    <div class="p-4 text-center">
+                        <h3 class="text-xl font-bold mb-2">👑 7 Star Luxury</h3>
+                        <p class="text-lg opacity-90 mb-2">Ultimate Experience</p>
+                        <div class="text-xl font-bold">₹25,000 - ₹50,000</div>
+                        <p class="text-sm opacity-80">per night</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-xl shadow-lg card-hover cursor-pointer overflow-hidden" onclick="selectHotel('5star')">
+                    <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="5 Star Hotel" class="w-full h-32 object-cover" onerror="this.style.display='none';">
+                    <div class="p-4 text-center">
+                        <h3 class="text-xl font-bold mb-2">⭐ 5 Star Premium</h3>
+                        <p class="text-lg opacity-90 mb-2">Comfort & Elegance</p>
+                        <div class="text-xl font-bold">₹8,000 - ₹20,000</div>
+                        <p class="text-sm opacity-80">per night</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-green-500 to-green-700 text-white rounded-xl shadow-lg card-hover cursor-pointer overflow-hidden" onclick="selectHotel('deluxe')">
+                    <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Deluxe Hotel" class="w-full h-32 object-cover" onerror="this.style.display='none';">
+                    <div class="p-4 text-center">
+                        <h3 class="text-xl font-bold mb-2">🏨 Deluxe</h3>
+                        <p class="text-lg opacity-90 mb-2">Quality & Value</p>
+                        <div class="text-xl font-bold">₹3,000 - ₹8,000</div>
+                        <p class="text-sm opacity-80">per night</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hotel Selection Page -->
+        <div id="hotelSelectionPage" class="page hidden p-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Choose Your Hotel</h2>
+            <p id="selectedHotelCategory" class="text-lg text-gray-600 mb-6"></p>
+            
+            <div id="hotelsList" class="space-y-4">
+                <!-- Hotels will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Total Expenses Page -->
+        <div id="expensesPage" class="page hidden p-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Trip Summary</h2>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Trip Details</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-gray-600">Destination:</span>
+                        <span id="finalDestination" class="font-semibold"></span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-gray-600">Travel:</span>
+                        <span id="finalTravel" class="font-semibold"></span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-gray-600">Hotel:</span>
+                        <span id="finalHotel" class="font-semibold"></span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-gray-600">Duration:</span>
+                        <span id="finalDuration" class="font-semibold">5 Days / 4 Nights</span>
+                    </div>
+                </div>
+                
+                <h3 class="text-xl font-bold text-gray-800 mb-4 mt-6">Cost Breakdown</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-gray-600">Travel Cost:</span>
+                        <span id="travelCost" class="font-semibold"></span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-gray-600">Hotel (4 nights):</span>
+                        <span id="hotelCost" class="font-semibold"></span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-gray-600">Food & Meals:</span>
+                        <span id="foodCost" class="font-semibold">₹6,000</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-gray-600">Local Transport:</span>
+                        <span id="localTransportCost" class="font-semibold">₹2,000</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-gray-600">Sightseeing:</span>
+                        <span id="sightseeingCost" class="font-semibold">₹3,000</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-t-2 border-gray-300 text-lg font-bold text-green-600">
+                        <span>Total Cost:</span>
+                        <span id="totalCost"></span>
+                    </div>
+                </div>
+                
+                <button onclick="bookTrip()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-lg font-bold text-lg hover:from-purple-600 hover:to-pink-600 transition-all mt-6">
+                    Book This Trip 🎉
+                </button>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profilePage" class="page hidden p-4">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 bg-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold">
+                        <span id="userInitials">U</span>
+                    </div>
+                    <h2 id="userName" class="text-xl font-bold">User Name</h2>
+                    <p id="userEmail" class="text-gray-600">user@example.com</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-3 border-b">
+                        <span class="text-gray-600">Total Trips:</span>
+                        <span class="font-semibold">3</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b">
+                        <span class="text-gray-600">Member Since:</span>
+                        <span class="font-semibold">2024</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b">
+                        <span class="text-gray-600">Favorite Region:</span>
+                        <span class="font-semibold">North India</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Page -->
+        <div id="bookingsPage" class="page hidden p-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">My Bookings</h2>
+                <button onclick="showBookingMap()" class="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 rounded-lg font-bold hover:from-blue-600 hover:to-blue-800 transition-all">
+                    🗺️ View Map
+                </button>
+            </div>
+            
+            <!-- Real-time Updates Banner -->
+            <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-3 rounded-lg mb-4 flex items-center">
+                <div class="animate-pulse w-3 h-3 bg-white rounded-full mr-3"></div>
+                <div class="flex-1">
+                    <div class="font-bold text-sm">Live Updates</div>
+                    <div id="liveUpdateText" class="text-xs opacity-90">Checking for booking updates...</div>
+                </div>
+                <div id="lastUpdateTime" class="text-xs opacity-75">Just now</div>
+            </div>
+            
+            <div id="bookingsList" class="space-y-4">
+                <!-- Bookings will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Booking Map Page -->
+        <div id="bookingMapPage" class="page hidden p-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Your Travel Map</h2>
+            
+            <!-- Map Container -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+                <div id="indiaMap" class="relative bg-gradient-to-br from-blue-50 to-green-50 h-96 flex items-center justify-center">
+                    <!-- SVG Map of India -->
+                    <svg viewBox="0 0 800 600" class="w-full h-full">
+                        <!-- India outline -->
+                        <path d="M200 100 L600 100 L650 150 L680 200 L700 300 L680 400 L650 450 L600 500 L400 520 L300 500 L250 450 L200 400 L180 300 L200 200 Z" 
+                              fill="#e5f3ff" stroke="#3b82f6" stroke-width="2"/>
+                        
+                        <!-- Regions -->
+                        <g id="mapRegions">
+                            <!-- North India -->
+                            <circle id="northMarker" cx="400" cy="200" r="8" fill="#ef4444" class="cursor-pointer hover:r-12 transition-all" onclick="showRegionBookings('north')">
+                                <title>North India</title>
+                            </circle>
+                            
+                            <!-- South India -->
+                            <circle id="southMarker" cx="450" cy="400" r="8" fill="#10b981" class="cursor-pointer hover:r-12 transition-all" onclick="showRegionBookings('south')">
+                                <title>South India</title>
+                            </circle>
+                            
+                            <!-- East India -->
+                            <circle id="eastMarker" cx="550" cy="300" r="8" fill="#f59e0b" class="cursor-pointer hover:r-12 transition-all" onclick="showRegionBookings('east')">
+                                <title>East India</title>
+                            </circle>
+                            
+                            <!-- West India -->
+                            <circle id="westMarker" cx="300" cy="300" r="8" fill="#8b5cf6" class="cursor-pointer hover:r-12 transition-all" onclick="showRegionBookings('west')">
+                                <title>West India</title>
+                            </circle>
+                        </g>
+                        
+                        <!-- Booking markers will be added dynamically -->
+                        <g id="bookingMarkers"></g>
+                        
+                        <!-- Legend -->
+                        <g id="mapLegend" transform="translate(20, 450)">
+                            <rect x="0" y="0" width="200" height="120" fill="white" fill-opacity="0.9" stroke="#ccc" rx="5"/>
+                            <text x="10" y="20" font-size="14" font-weight="bold" fill="#333">Legend</text>
+                            <circle cx="20" cy="40" r="6" fill="#ef4444"/>
+                            <text x="35" y="45" font-size="12" fill="#333">Confirmed Bookings</text>
+                            <circle cx="20" cy="60" r="6" fill="#f59e0b"/>
+                            <text x="35" y="65" font-size="12" fill="#333">Upcoming Trips</text>
+                            <circle cx="20" cy="80" r="6" fill="#6b7280"/>
+                            <text x="35" y="85" font-size="12" fill="#333">Past Trips</text>
+                            <circle cx="20" cy="100" r="6" fill="#10b981"/>
+                            <text x="35" y="105" font-size="12" fill="#333">Available Destinations</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Map Stats -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-lg shadow text-center">
+                    <div class="text-2xl font-bold text-blue-600" id="totalDestinations">0</div>
+                    <div class="text-sm text-gray-600">Destinations Visited</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow text-center">
+                    <div class="text-2xl font-bold text-green-600" id="totalDistance">0 km</div>
+                    <div class="text-sm text-gray-600">Total Distance Traveled</div>
+                </div>
+            </div>
+            
+            <!-- Region Details -->
+            <div id="regionDetails" class="bg-white rounded-xl shadow-lg p-6 hidden">
+                <h3 id="regionTitle" class="text-xl font-bold mb-4"></h3>
+                <div id="regionBookings" class="space-y-3">
+                    <!-- Region bookings will be populated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- UPI Payment Page -->
+        <div id="paymentPage" class="page hidden p-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Payment Options</h2>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-bold mb-4">Trip Summary</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Destination:</span>
+                        <span id="paymentDestination" class="font-semibold"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Duration:</span>
+                        <span id="paymentDuration" class="font-semibold"></span>
+                    </div>
+                    <div class="flex justify-between border-t pt-2 mt-2">
+                        <span class="text-lg font-bold">Total Amount:</span>
+                        <span id="paymentTotal" class="text-lg font-bold text-green-600"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-gray-800">Choose Payment Method</h3>
+                
+                <!-- UPI Options -->
+                <div class="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-4 rounded-xl shadow-lg card-hover cursor-pointer" onclick="selectPayment('googlepay')">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-white rounded-lg mr-4 flex items-center justify-center">
+                            <span class="text-2xl">💳</span>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">Google Pay</h4>
+                            <p class="text-sm opacity-90">Pay with Google Pay UPI</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-90">Instant</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-purple-500 to-purple-700 text-white p-4 rounded-xl shadow-lg card-hover cursor-pointer" onclick="selectPayment('phonepe')">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-white rounded-lg mr-4 flex items-center justify-center">
+                            <span class="text-2xl">📱</span>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">PhonePe</h4>
+                            <p class="text-sm opacity-90">Pay with PhonePe UPI</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-90">Instant</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-green-500 to-green-700 text-white p-4 rounded-xl shadow-lg card-hover cursor-pointer" onclick="selectPayment('paytm')">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-white rounded-lg mr-4 flex items-center justify-center">
+                            <span class="text-2xl">💰</span>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">Paytm</h4>
+                            <p class="text-sm opacity-90">Pay with Paytm UPI</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-90">Instant</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-orange-500 to-red-600 text-white p-4 rounded-xl shadow-lg card-hover cursor-pointer" onclick="selectPayment('upi')">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-white rounded-lg mr-4 flex items-center justify-center">
+                            <span class="text-2xl">🏦</span>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">Other UPI Apps</h4>
+                            <p class="text-sm opacity-90">BHIM, Amazon Pay, etc.</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-90">Instant</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Payment Methods -->
+                <div class="bg-white border-2 border-gray-200 p-4 rounded-xl shadow-lg card-hover cursor-pointer" onclick="selectPayment('card')">
+                    <div class="flex items-center text-gray-700">
+                        <div class="w-12 h-12 bg-gray-100 rounded-lg mr-4 flex items-center justify-center">
+                            <span class="text-2xl">💳</span>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">Credit/Debit Card</h4>
+                            <p class="text-sm text-gray-600">Visa, Mastercard, RuPay</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-600">Secure</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border-2 border-gray-200 p-4 rounded-xl shadow-lg card-hover cursor-pointer" onclick="selectPayment('netbanking')">
+                    <div class="flex items-center text-gray-700">
+                        <div class="w-12 h-12 bg-gray-100 rounded-lg mr-4 flex items-center justify-center">
+                            <span class="text-2xl">🏛️</span>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">Net Banking</h4>
+                            <p class="text-sm text-gray-600">All major banks supported</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-600">Secure</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Processing Page -->
+        <div id="paymentProcessingPage" class="page hidden p-4">
+            <div class="text-center py-12">
+                <div class="animate-spin w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-6"></div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Processing Payment</h2>
+                <p class="text-gray-600 mb-6">Please wait while we process your payment...</p>
+                <div id="paymentMethodInfo" class="bg-white rounded-lg p-4 shadow-lg max-w-sm mx-auto">
+                    <div class="flex items-center justify-center">
+                        <span id="paymentIcon" class="text-3xl mr-3"></span>
+                        <div>
+                            <div id="paymentMethodName" class="font-bold"></div>
+                            <div id="paymentAmount" class="text-green-600 font-bold"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Success Page -->
+        <div id="paymentSuccessPage" class="page hidden p-4">
+            <div class="text-center py-12">
+                <div class="w-20 h-20 bg-green-500 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <span class="text-white text-4xl">✓</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Payment Successful!</h2>
+                <p class="text-gray-600 mb-6">Your trip has been booked successfully</p>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                    <h3 class="font-bold mb-4">Booking Confirmation</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Booking ID:</span>
+                            <span id="bookingId" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Destination:</span>
+                            <span id="confirmedDestination" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Duration:</span>
+                            <span id="confirmedDuration" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Amount Paid:</span>
+                            <span id="confirmedAmount" class="font-bold text-green-600"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <button onclick="showTripDetails()" class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-3 px-6 rounded-lg font-bold hover:from-orange-600 hover:to-red-700 transition-all">
+                        🗺️ View Trip Details
+                    </button>
+                    <button onclick="downloadTicket()" class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 px-6 rounded-lg font-bold hover:from-blue-600 hover:to-blue-800 transition-all">
+                        📄 Download E-Ticket
+                    </button>
+                    <button onclick="showBookings()" class="w-full bg-gradient-to-r from-green-500 to-green-700 text-white py-3 px-6 rounded-lg font-bold hover:from-green-600 hover:to-green-800 transition-all">
+                        📋 View All Bookings
+                    </button>
+                    <button onclick="goHome()" class="w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white py-3 px-6 rounded-lg font-bold hover:from-purple-600 hover:to-purple-800 transition-all">
+                        🏠 Back to Home
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trip Details Page -->
+        <div id="tripDetailsPage" class="page hidden p-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Trip Details</h2>
+            
+            <!-- Route Map -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    🗺️ Your Route
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                            <div>
+                                <div class="font-semibold text-gray-800" id="tripOrigin">Your Location</div>
+                                <div class="text-sm text-gray-600" id="tripOriginCity"></div>
+                            </div>
+                        </div>
+                        <div class="flex-1 mx-4">
+                            <div class="border-t-2 border-dashed border-gray-300 relative">
+                                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                    <span class="bg-white px-2 text-gray-500 text-sm" id="tripDistance">Calculating...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                            <div>
+                                <div class="font-semibold text-gray-800" id="tripDestination">Destination</div>
+                                <div class="text-sm text-gray-600" id="tripDestinationCity"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Map Actions -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="openGoogleMapsDirections()" class="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 px-4 rounded-lg font-bold hover:from-blue-600 hover:to-blue-800 transition-all flex items-center justify-center">
+                            <span class="mr-2">🧭</span>
+                            Get Directions
+                        </button>
+                        <button onclick="openGoogleMapsExplore()" class="bg-gradient-to-r from-green-500 to-green-700 text-white py-3 px-4 rounded-lg font-bold hover:from-green-600 hover:to-green-800 transition-all flex items-center justify-center">
+                            <span class="mr-2">📍</span>
+                            Explore Area
+                        </button>
+                    </div>
+                    
+                    <!-- Travel Info -->
+                    <div class="grid grid-cols-3 gap-3 text-center">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <div class="text-lg font-bold text-blue-600" id="estimatedTime">~</div>
+                            <div class="text-xs text-gray-600">Travel Time</div>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <div class="text-lg font-bold text-green-600" id="estimatedDistance">~</div>
+                            <div class="text-xs text-gray-600">Distance</div>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <div class="text-lg font-bold text-purple-600" id="travelMode">🚗</div>
+                            <div class="text-xs text-gray-600">Mode</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hotel Information -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    🏨 Your Hotel
+                </h3>
+                <div id="tripHotelDetails" class="space-y-3">
+                    <!-- Hotel details will be populated by JavaScript -->
+                </div>
+                <button onclick="openHotelOnMap()" class="mt-4 w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-2 px-4 rounded-lg font-bold hover:from-orange-600 hover:to-red-700 transition-all">
+                    📍 View Hotel on Map
+                </button>
+            </div>
+            
+            <!-- Day-wise Itinerary -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    📅 Day-wise Itinerary
+                </h3>
+                <div id="dayWiseItinerary" class="space-y-4">
+                    <!-- Itinerary will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settingsPage" class="page hidden p-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Settings</h2>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-3 border-b">
+                        <span class="text-gray-700">Push Notifications</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="notificationToggle" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-3 border-b">
+                        <span class="text-gray-700">Dark Mode</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="darkModeToggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-3 border-b">
+                        <span class="text-gray-700">Language</span>
+                        <select class="bg-gray-100 rounded px-3 py-1">
+                            <option>English</option>
+                            <option>Hindi</option>
+                            <option>Tamil</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-3 border-b">
+                        <span class="text-gray-700">Currency</span>
+                        <select class="bg-gray-100 rounded px-3 py-1">
+                            <option>INR (₹)</option>
+                            <option>USD ($)</option>
+                            <option>EUR (€)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="flex justify-around py-3">
+            <button onclick="goHome()" class="flex flex-col items-center text-purple-600">
+                <span class="text-xl">🏠</span>
+                <span class="text-xs">Home</span>
+            </button>
+            <button onclick="showSearch()" class="flex flex-col items-center text-gray-500">
+                <span class="text-xl">🔍</span>
+                <span class="text-xs">Search</span>
+            </button>
+            <button onclick="showBookings()" class="flex flex-col items-center text-gray-500">
+                <span class="text-xl">📋</span>
+                <span class="text-xs">Bookings</span>
+            </button>
+            <button onclick="showProfile()" class="flex flex-col items-center text-gray-500">
+                <span class="text-xl">👤</span>
+                <span class="text-xs">Profile</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // Global variables
+        let currentRegion = '';
+        let selectedPlace = '';
+        let selectedPlaceDetails = null;
+        let selectedTravel = '';
+        let selectedHotel = '';
+        let selectedHotelDetails = null;
+        let selectedDuration = 0;
+        let selectedDates = { checkin: '', checkout: '' };
+        let totalCost = 0;
+        let isLoggedIn = false;
+        let currentUser = null;
+        let userLocation = { state: '', city: '' };
+        let pageHistory = [];
+        let notificationsEnabled = false;
+        let userBookings = [];
+        let updateInterval = null;
+
+        // Cities data by state
+        const citiesData = {
+            maharashtra: ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Aurangabad', 'Solapur', 'Kolhapur'],
+            delhi: ['New Delhi', 'Central Delhi', 'South Delhi', 'North Delhi', 'East Delhi', 'West Delhi'],
+            karnataka: ['Bangalore', 'Mysore', 'Mangalore', 'Hubli', 'Belgaum', 'Gulbarga', 'Shimoga'],
+            tamil_nadu: ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tirunelveli', 'Erode'],
+            gujarat: ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar', 'Gandhinagar'],
+            rajasthan: ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Bikaner', 'Ajmer', 'Alwar'],
+            west_bengal: ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Malda', 'Bardhaman'],
+            uttar_pradesh: ['Lucknow', 'Kanpur', 'Ghaziabad', 'Agra', 'Varanasi', 'Meerut', 'Allahabad'],
+            kerala: ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Thrissur', 'Kollam', 'Palakkad', 'Alappuzha'],
+            punjab: ['Chandigarh', 'Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'Bathinda', 'Mohali'],
+            haryana: ['Gurgaon', 'Faridabad', 'Panipat', 'Ambala', 'Yamunanagar', 'Rohtak', 'Hisar'],
+            bihar: ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Purnia', 'Darbhanga', 'Bihar Sharif'],
+            odisha: ['Bhubaneswar', 'Cuttack', 'Rourkela', 'Brahmapur', 'Sambalpur', 'Puri', 'Balasore'],
+            assam: ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon', 'Tinsukia', 'Tezpur'],
+            telangana: ['Hyderabad', 'Warangal', 'Nizamabad', 'Khammam', 'Karimnagar', 'Ramagundam', 'Mahbubnagar'],
+            andhra_pradesh: ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Rajahmundry', 'Tirupati']
+        };
+
+        // Detailed place information
+        const placeDetailsData = {
+            'Taj Mahal, Agra': {
+                fullDescription: 'The Taj Mahal is an ivory-white marble mausoleum on the right bank of the river Yamuna in the Indian city of Agra. It was commissioned in 1632 by the Mughal emperor Shah Jahan to house the tomb of his favourite wife, Mumtaz Mahal; it also houses the tomb of Shah Jahan himself.',
+                rating: 4.8,
+                bestTime: 'Oct - Mar',
+                recommendedDays: '2-3 Days',
+                attractions: ['Taj Mahal', 'Agra Fort', 'Mehtab Bagh', 'Itmad-ud-Daulah', 'Fatehpur Sikri'],
+                food: ['Petha', 'Mughlai Cuisine', 'Bedai', 'Jalebi', 'Chaat'],
+                tips: [
+                    'Visit during sunrise or sunset for the best views',
+                    'Friday is closed for general public',
+                    'Carry valid ID proof for entry',
+                    'Photography inside the main tomb is not allowed'
+                ]
+            },
+            'Red Fort, Delhi': {
+                fullDescription: 'The Red Fort is a historic walled city in Delhi, India, that served as the main residence of the Mughal Emperors for nearly 200 years. It represents the zenith of Mughal creativity which, under the Shah Jahan, was brought to a new level of refinement.',
+                rating: 4.5,
+                bestTime: 'Oct - Mar',
+                recommendedDays: '3-4 Days',
+                attractions: ['Red Fort', 'India Gate', 'Qutub Minar', 'Lotus Temple', 'Humayun Tomb'],
+                food: ['Chole Bhature', 'Paranthas', 'Kebabs', 'Kulfi', 'Chaat'],
+                tips: [
+                    'Use Delhi Metro for convenient travel',
+                    'Try street food at Chandni Chowk',
+                    'Book tickets online to avoid queues',
+                    'Carry water and wear comfortable shoes'
+                ]
+            },
+            'Jaipur, Rajasthan': {
+                fullDescription: 'Jaipur, the Pink City, is the capital of Rajasthan known for its stunning palaces, forts, and vibrant culture. The city is famous for its distinctive pink-colored buildings and rich Rajputana heritage.',
+                rating: 4.7,
+                bestTime: 'Oct - Mar',
+                recommendedDays: '3-4 Days',
+                attractions: ['Hawa Mahal', 'City Palace', 'Amber Fort', 'Jantar Mantar', 'Nahargarh Fort'],
+                food: ['Dal Baati Churma', 'Laal Maas', 'Ghewar', 'Pyaaz Kachori', 'Rajasthani Thali'],
+                tips: [
+                    'Bargain while shopping in local markets',
+                    'Try elephant ride at Amber Fort',
+                    'Visit during festivals for cultural experience',
+                    'Stay hydrated and use sunscreen'
+                ]
+            },
+            'Backwaters, Kerala': {
+                fullDescription: 'Kerala Backwaters are a network of brackish lagoons and lakes lying parallel to the Arabian Sea coast. These backwaters are a unique ecosystem with mangrove forests, coconut groves, and traditional villages.',
+                rating: 4.6,
+                bestTime: 'Oct - Feb',
+                recommendedDays: '2-3 Days',
+                attractions: ['Houseboat Stay', 'Kumarakom Bird Sanctuary', 'Vembanad Lake', 'Pathiramanal Island', 'Chinese Fishing Nets'],
+                food: ['Fish Curry', 'Appam', 'Puttu', 'Karimeen Fry', 'Coconut Water'],
+                tips: [
+                    'Book houseboat in advance',
+                    'Carry mosquito repellent',
+                    'Try authentic Kerala cuisine',
+                    'Respect local customs and environment'
+                ]
+            },
+            'Goa Beaches': {
+                fullDescription: 'Goa is famous for its pristine beaches, Portuguese colonial architecture, and vibrant nightlife. The state offers a perfect blend of Indian and Portuguese cultures with beautiful coastline stretching along the Arabian Sea.',
+                rating: 4.4,
+                bestTime: 'Nov - Feb',
+                recommendedDays: '4-5 Days',
+                attractions: ['Baga Beach', 'Calangute Beach', 'Fort Aguada', 'Basilica of Bom Jesus', 'Dudhsagar Falls'],
+                food: ['Fish Curry Rice', 'Bebinca', 'Vindaloo', 'Feni', 'Prawn Balchao'],
+                tips: [
+                    'Try water sports at popular beaches',
+                    'Rent a scooter for easy transportation',
+                    'Respect beach safety guidelines',
+                    'Explore both North and South Goa'
+                ]
+            },
+            'Gateway of India, Mumbai': {
+                fullDescription: 'The Gateway of India is an arch-monument built in the early 20th century in Mumbai. It was erected to commemorate the landing of King George V and Queen Mary at Apollo Bunder on their visit to India in 1911.',
+                rating: 4.3,
+                bestTime: 'Nov - Feb',
+                recommendedDays: '3-4 Days',
+                attractions: ['Gateway of India', 'Marine Drive', 'Elephanta Caves', 'Chhatrapati Shivaji Terminus', 'Dhobi Ghat'],
+                food: ['Vada Pav', 'Pav Bhaji', 'Bhel Puri', 'Misal Pav', 'Solkadhi'],
+                tips: [
+                    'Use local trains for city travel',
+                    'Try street food at Juhu Beach',
+                    'Visit during evening for better weather',
+                    'Book Elephanta Caves ferry in advance'
+                ]
+            },
+            'Victoria Memorial, Kolkata': {
+                fullDescription: 'Victoria Memorial is a large marble building dedicated to the memory of Queen Victoria, now serving as a museum and tourist destination. It is one of the most beautiful monuments in India, built in Indo-Saracenic revivalist style.',
+                rating: 4.5,
+                bestTime: 'Oct - Mar',
+                recommendedDays: '2-3 Days',
+                attractions: ['Victoria Memorial', 'Howrah Bridge', 'Dakshineswar Temple', 'Park Street', 'Indian Museum'],
+                food: ['Rosogolla', 'Fish Curry', 'Kathi Roll', 'Mishti Doi', 'Puchka'],
+                tips: [
+                    'Take tram ride for authentic experience',
+                    'Visit during Durga Puja for festivities',
+                    'Try Bengali sweets at local shops',
+                    'Explore College Street book market'
+                ]
+            },
+            'Darjeeling': {
+                fullDescription: 'Darjeeling is a hill station in West Bengal famous for its tea gardens, the Darjeeling Himalayan Railway, and stunning views of Kangchenjunga, the worlds third-highest mountain.',
+                rating: 4.6,
+                bestTime: 'Mar - May, Oct - Dec',
+                recommendedDays: '3-4 Days',
+                attractions: ['Tiger Hill', 'Darjeeling Himalayan Railway', 'Peace Pagoda', 'Himalayan Mountaineering Institute', 'Tea Gardens'],
+                food: ['Momos', 'Thukpa', 'Darjeeling Tea', 'Churpee', 'Gundruk'],
+                tips: [
+                    'Wake up early for Tiger Hill sunrise',
+                    'Book toy train tickets in advance',
+                    'Carry warm clothes even in summer',
+                    'Try tea tasting at local gardens'
+                ]
+            }
+        };
+
+        // Distance-based travel cost multipliers
+        const distanceMultipliers = {
+            'same_state': { flight: 0.7, train: 0.6, bus: 0.5 },
+            'nearby_state': { flight: 1.0, train: 0.8, bus: 0.7 },
+            'far_state': { flight: 1.5, train: 1.2, bus: 1.0 },
+            'very_far': { flight: 2.0, train: 1.8, bus: 1.5 }
+        };
+
+        // Places data with images
+        const placesData = {
+            north: [
+                { 
+                    name: 'Taj Mahal, Agra', 
+                    emoji: '🕌', 
+                    description: 'Wonder of the World',
+                    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Red Fort, Delhi', 
+                    emoji: '🏰', 
+                    description: 'Mughal Architecture',
+                    image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Jaipur, Rajasthan', 
+                    emoji: '🏛️', 
+                    description: 'Pink City',
+                    image: 'https://images.unsplash.com/photo-1599661046827-dacde6976549?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Shimla, Himachal', 
+                    emoji: '🏔️', 
+                    description: 'Hill Station',
+                    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Manali, Himachal', 
+                    emoji: '⛷️', 
+                    description: 'Adventure Paradise',
+                    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Rishikesh, Uttarakhand', 
+                    emoji: '🧘', 
+                    description: 'Yoga Capital',
+                    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Varanasi, Uttar Pradesh', 
+                    emoji: '🕉️', 
+                    description: 'Spiritual City',
+                    image: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Leh Ladakh, J&K', 
+                    emoji: '🏔️', 
+                    description: 'Land of High Passes',
+                    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Amritsar, Punjab', 
+                    emoji: '🏛️', 
+                    description: 'Golden Temple',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Haridwar, Uttarakhand', 
+                    emoji: '🛕', 
+                    description: 'Gateway to Gods',
+                    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Jodhpur, Rajasthan', 
+                    emoji: '🏰', 
+                    description: 'Blue City',
+                    image: 'https://images.unsplash.com/photo-1599661046827-dacde6976549?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Dharamshala, Himachal', 
+                    emoji: '🏔️', 
+                    description: 'Dalai Lama Residence',
+                    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Mathura, Uttar Pradesh', 
+                    emoji: '🛕', 
+                    description: 'Krishna Birthplace',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Nainital, Uttarakhand', 
+                    emoji: '🏞️', 
+                    description: 'Lake District',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Pushkar, Rajasthan', 
+                    emoji: '🐪', 
+                    description: 'Camel Fair',
+                    image: 'https://images.unsplash.com/photo-1599661046827-dacde6976549?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                }
+            ],
+            south: [
+                { 
+                    name: 'Mysore Palace', 
+                    emoji: '🏰', 
+                    description: 'Royal Heritage',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Backwaters, Kerala', 
+                    emoji: '🛶', 
+                    description: 'Serene Waters',
+                    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Goa Beaches', 
+                    emoji: '🏖️', 
+                    description: 'Beach Paradise',
+                    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Ooty, Tamil Nadu', 
+                    emoji: '🌄', 
+                    description: 'Hill Station',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Hampi, Karnataka', 
+                    emoji: '🏛️', 
+                    description: 'Ancient Ruins',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Munnar, Kerala', 
+                    emoji: '🍃', 
+                    description: 'Tea Plantations',
+                    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Coorg, Karnataka', 
+                    emoji: '☕', 
+                    description: 'Coffee Country',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Pondicherry', 
+                    emoji: '🇫🇷', 
+                    description: 'French Colony',
+                    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Kanyakumari, Tamil Nadu', 
+                    emoji: '🌅', 
+                    description: 'Southernmost Tip',
+                    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Mahabalipuram, Tamil Nadu', 
+                    emoji: '🗿', 
+                    description: 'Shore Temple',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Wayanad, Kerala', 
+                    emoji: '🌿', 
+                    description: 'Wildlife Sanctuary',
+                    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Kodaikanal, Tamil Nadu', 
+                    emoji: '🏞️', 
+                    description: 'Princess of Hills',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Varkala, Kerala', 
+                    emoji: '🏖️', 
+                    description: 'Cliff Beach',
+                    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Chikmagalur, Karnataka', 
+                    emoji: '☕', 
+                    description: 'Coffee Hills',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Rameshwaram, Tamil Nadu', 
+                    emoji: '🛕', 
+                    description: 'Sacred Island',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Hyderabad, Telangana', 
+                    emoji: '🏰', 
+                    description: 'City of Nizams',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                }
+            ],
+            east: [
+                { 
+                    name: 'Victoria Memorial, Kolkata', 
+                    emoji: '🏛️', 
+                    description: 'Colonial Architecture',
+                    image: 'https://images.unsplash.com/photo-1558431382-27e303142255?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Darjeeling', 
+                    emoji: '🚂', 
+                    description: 'Tea Gardens',
+                    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Sundarbans, West Bengal', 
+                    emoji: '🐅', 
+                    description: 'Tiger Reserve',
+                    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Puri, Odisha', 
+                    emoji: '🛕', 
+                    description: 'Jagannath Temple',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Konark, Odisha', 
+                    emoji: '☀️', 
+                    description: 'Sun Temple',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Kaziranga, Assam', 
+                    emoji: '🦏', 
+                    description: 'Rhino Sanctuary',
+                    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Shillong, Meghalaya', 
+                    emoji: '🌧️', 
+                    description: 'Scotland of East',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Gangtok, Sikkim', 
+                    emoji: '🏔️', 
+                    description: 'Mountain Capital',
+                    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Bhubaneswar, Odisha', 
+                    emoji: '🛕', 
+                    description: 'Temple City',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Kalimpong, West Bengal', 
+                    emoji: '🌸', 
+                    description: 'Flower Town',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Imphal, Manipur', 
+                    emoji: '💃', 
+                    description: 'Cultural Hub',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Agartala, Tripura', 
+                    emoji: '🏛️', 
+                    description: 'Royal Palace',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                }
+            ],
+            west: [
+                { 
+                    name: 'Gateway of India, Mumbai', 
+                    emoji: '🌊', 
+                    description: 'Iconic Monument',
+                    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Udaipur, Rajasthan', 
+                    emoji: '🏰', 
+                    description: 'City of Lakes',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Ajanta Caves, Maharashtra', 
+                    emoji: '🗿', 
+                    description: 'Ancient Art',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Ellora Caves, Maharashtra', 
+                    emoji: '🏛️', 
+                    description: 'Rock Cut Temples',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Lonavala, Maharashtra', 
+                    emoji: '🌧️', 
+                    description: 'Monsoon Retreat',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Mount Abu, Rajasthan', 
+                    emoji: '🏔️', 
+                    description: 'Hill Station',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Jaisalmer, Rajasthan', 
+                    emoji: '🏜️', 
+                    description: 'Golden City',
+                    image: 'https://images.unsplash.com/photo-1599661046827-dacde6976549?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Rann of Kutch, Gujarat', 
+                    emoji: '🧂', 
+                    description: 'White Desert',
+                    image: 'https://images.unsplash.com/photo-1599661046827-dacde6976549?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Somnath, Gujarat', 
+                    emoji: '🛕', 
+                    description: 'Sacred Temple',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Mahabaleshwar, Maharashtra', 
+                    emoji: '🍓', 
+                    description: 'Strawberry Hills',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Shirdi, Maharashtra', 
+                    emoji: '🙏', 
+                    description: 'Sai Baba Temple',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Dwarka, Gujarat', 
+                    emoji: '🛕', 
+                    description: 'Krishna City',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Nashik, Maharashtra', 
+                    emoji: '🍇', 
+                    description: 'Wine Country',
+                    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                },
+                { 
+                    name: 'Aurangabad, Maharashtra', 
+                    emoji: '🏛️', 
+                    description: 'Historical City',
+                    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                }
+            ]
+        };
+
+        // Travel and hotel costs
+        const travelCosts = {
+            flight: { min: 8000, max: 15000 },
+            train: { min: 2000, max: 5000 },
+            bus: { min: 800, max: 2500 },
+            own: { min: 0, max: 0 }
+        };
+
+        const hotelCosts = {
+            '7star': { min: 25000, max: 50000 },
+            '5star': { min: 8000, max: 20000 },
+            'deluxe': { min: 3000, max: 8000 }
+        };
+
+        // Trip itinerary data for different destinations
+        const itineraryData = {
+            'Taj Mahal, Agra': {
+                attractions: ['Taj Mahal', 'Agra Fort', 'Mehtab Bagh', 'Itmad-ud-Daulah', 'Fatehpur Sikri'],
+                activities: ['Sunrise at Taj Mahal', 'Heritage Walk', 'Mughal Cuisine', 'Shopping at Sadar Bazaar', 'Sunset Photography']
+            },
+            'Red Fort, Delhi': {
+                attractions: ['Red Fort', 'India Gate', 'Qutub Minar', 'Lotus Temple', 'Humayun Tomb'],
+                activities: ['Historical Tour', 'Street Food Walk', 'Metro Experience', 'Chandni Chowk Shopping', 'Cultural Show']
+            },
+            'Jaipur, Rajasthan': {
+                attractions: ['Hawa Mahal', 'City Palace', 'Amber Fort', 'Jantar Mantar', 'Nahargarh Fort'],
+                activities: ['Elephant Ride', 'Rajasthani Folk Dance', 'Gem Shopping', 'Traditional Cuisine', 'Palace Photography']
+            },
+            'Backwaters, Kerala': {
+                attractions: ['Houseboat Stay', 'Kumarakom Bird Sanctuary', 'Vembanad Lake', 'Pathiramanal Island', 'Chinese Fishing Nets'],
+                activities: ['Houseboat Cruise', 'Ayurvedic Massage', 'Backwater Fishing', 'Village Tour', 'Sunset Viewing']
+            },
+            'Goa Beaches': {
+                attractions: ['Baga Beach', 'Calangute Beach', 'Fort Aguada', 'Basilica of Bom Jesus', 'Dudhsagar Falls'],
+                activities: ['Water Sports', 'Beach Parties', 'Portuguese Architecture Tour', 'Spice Plantation Visit', 'Sunset Cruise']
+            },
+            'Gateway of India, Mumbai': {
+                attractions: ['Gateway of India', 'Marine Drive', 'Elephanta Caves', 'Chhatrapati Shivaji Terminus', 'Dhobi Ghat'],
+                activities: ['Bollywood Tour', 'Street Food Tasting', 'Local Train Experience', 'Shopping at Colaba', 'Night Life']
+            },
+            'Victoria Memorial, Kolkata': {
+                attractions: ['Victoria Memorial', 'Howrah Bridge', 'Dakshineswar Temple', 'Park Street', 'Indian Museum'],
+                activities: ['Tram Ride', 'Bengali Cuisine', 'Cultural Programs', 'Book Shopping', 'River Cruise']
+            },
+            'Darjeeling': {
+                attractions: ['Tiger Hill', 'Darjeeling Himalayan Railway', 'Peace Pagoda', 'Himalayan Mountaineering Institute', 'Tea Gardens'],
+                activities: ['Sunrise Viewing', 'Toy Train Ride', 'Tea Tasting', 'Monastery Visit', 'Mountain Trekking']
+            }
+        };
+
+        // Hotel data with photos and details
+        const hotelsData = {
+            '7star': [
+                {
+                    name: 'The Oberoi Palace',
+                    location: 'Central Location',
+                    rating: 4.9,
+                    price: 35000,
+                    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    amenities: ['Spa', 'Pool', 'Fine Dining', 'Butler Service'],
+                    description: 'Ultimate luxury with world-class amenities'
+                },
+                {
+                    name: 'Taj Heritage Grand',
+                    location: 'Premium District',
+                    rating: 4.8,
+                    price: 42000,
+                    image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    amenities: ['Royal Suite', 'Helicopter Service', 'Private Beach', 'Michelin Restaurant'],
+                    description: 'Royal experience with unmatched elegance'
+                },
+                {
+                    name: 'Imperial Crown Resort',
+                    location: 'Exclusive Area',
+                    rating: 4.7,
+                    price: 28000,
+                    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    amenities: ['Private Villa', 'Golf Course', 'Yacht Club', 'Personal Chef'],
+                    description: 'Exclusive resort with personalized luxury'
+                }
+            ],
+            '5star': [
+                {
+                    name: 'Grand Meridien Hotel',
+                    location: 'City Center',
+                    rating: 4.6,
+                    price: 15000,
+                    image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    amenities: ['Spa', 'Gym', 'Restaurant', 'Business Center'],
+                    description: 'Premium comfort with excellent service'
+                },
+                {
+                    name: 'Radisson Elite',
+                    location: 'Business District',
+                    rating: 4.5,
+                    price: 12000,
+                    image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    amenities: ['Pool', 'Conference Hall', 'Multi-cuisine', 'Airport Shuttle'],
+                    description: 'Modern luxury with business facilities'
+                },
+                {
+                    name: 'Hyatt Regency',
+                    location: 'Tourist Hub',
+                    rating: 4.4,
+                    price: 18000,
+                    image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    amenities: ['Rooftop Pool', 'Multiple Restaurants', 'Spa', 'Concierge'],
+                    description: 'Elegant stay with panoramic city views'
+                }
+            ],
+            'deluxe': [
+                {
+                    name: 'Hotel Paradise Inn',
+                    location: 'Market Area',
+                    rating: 4.2,
+                    price: 5500,
+                    image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    amenities: ['Restaurant', 'WiFi', 'Room Service', 'Travel Desk'],
+                    description: 'Comfortable stay with great value'
+                },
+                {
+                    name: 'Royal Garden Hotel',
+                    location: 'Garden District',
+                    rating: 4.1,
+                    price: 4800,
+                    image: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    amenities: ['Garden View', 'Restaurant', 'Parking', 'Laundry'],
+                    description: 'Peaceful location with garden views'
+                },
+                {
+                    name: 'City Plaza Hotel',
+                    location: 'Shopping District',
+                    rating: 4.0,
+                    price: 6200,
+                    image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    amenities: ['Central Location', 'Shopping Access', 'Cafe', 'Tour Assistance'],
+                    description: 'Perfect for shopping and sightseeing'
+                }
+            ]
+        };
+
+        // App initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAuthUI();
+            checkOnlineStatus();
+            requestNotificationPermission();
+            
+            // Show login page first
+            showLogin();
+            
+            // Check if app is installed
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                console.log('App is running in standalone mode');
+            }
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+        });
+
+        // Location functions
+        function showLocationPage() {
+            showPage('locationPage');
+            updateHeader('Select Location');
+        }
+
+        function updateCities() {
+            const stateSelect = document.getElementById('stateSelect');
+            const citySelect = document.getElementById('citySelect');
+            const selectedState = stateSelect.value;
+            
+            citySelect.innerHTML = '<option value="">Select Your City</option>';
+            
+            if (selectedState && citiesData[selectedState]) {
+                citiesData[selectedState].forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.toLowerCase().replace(/\s+/g, '_');
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            }
+        }
+
+        function confirmLocation() {
+            const stateSelect = document.getElementById('stateSelect');
+            const citySelect = document.getElementById('citySelect');
+            
+            if (stateSelect.value && citySelect.value) {
+                userLocation.state = stateSelect.value;
+                userLocation.city = citySelect.options[citySelect.selectedIndex].text;
+                goHome();
+                showNotification(`Location set to ${userLocation.city}! You can now explore destinations.`);
+            } else {
+                alert('Please select both state and city to continue.');
+            }
+        }
+
+        // Calculate distance category for pricing
+        function getDistanceCategory(destinationPlace) {
+            // Simplified distance calculation based on regions
+            const userState = userLocation.state;
+            const destinationRegion = getPlaceRegion(destinationPlace);
+            const userRegion = getStateRegion(userState);
+            
+            if (userRegion === destinationRegion) {
+                return 'same_state';
+            } else if (isNearbyRegion(userRegion, destinationRegion)) {
+                return 'nearby_state';
+            } else if (isFarRegion(userRegion, destinationRegion)) {
+                return 'far_state';
+            } else {
+                return 'very_far';
+            }
+        }
+
+        function getPlaceRegion(place) {
+            // Determine region based on place name
+            if (place.includes('Delhi') || place.includes('Agra') || place.includes('Jaipur') || place.includes('Shimla') || place.includes('Manali')) {
+                return 'north';
+            } else if (place.includes('Kerala') || place.includes('Goa') || place.includes('Mysore') || place.includes('Ooty')) {
+                return 'south';
+            } else if (place.includes('Kolkata') || place.includes('Darjeeling')) {
+                return 'east';
+            } else if (place.includes('Mumbai') || place.includes('Udaipur') || place.includes('Ajanta')) {
+                return 'west';
+            }
+            return 'north'; // default
+        }
+
+        function getStateRegion(state) {
+            const northStates = ['delhi', 'uttar_pradesh', 'rajasthan', 'punjab', 'haryana'];
+            const southStates = ['kerala', 'karnataka', 'tamil_nadu', 'telangana', 'andhra_pradesh'];
+            const eastStates = ['west_bengal', 'bihar', 'odisha', 'assam'];
+            const westStates = ['maharashtra', 'gujarat'];
+            
+            if (northStates.includes(state)) return 'north';
+            if (southStates.includes(state)) return 'south';
+            if (eastStates.includes(state)) return 'east';
+            if (westStates.includes(state)) return 'west';
+            return 'north'; // default
+        }
+
+        function isNearbyRegion(userRegion, destRegion) {
+            const nearby = {
+                'north': ['west'],
+                'south': ['west'],
+                'east': ['north'],
+                'west': ['north', 'south']
+            };
+            return nearby[userRegion] && nearby[userRegion].includes(destRegion);
+        }
+
+        function isFarRegion(userRegion, destRegion) {
+            const far = {
+                'north': ['south'],
+                'south': ['north', 'east'],
+                'east': ['west', 'south'],
+                'west': ['east']
+            };
+            return far[userRegion] && far[userRegion].includes(destRegion);
+        }
+
+        // PWA and offline functionality
+        function checkOnlineStatus() {
+            const offlineIndicator = document.getElementById('offlineIndicator');
+            
+            function updateOnlineStatus() {
+                if (navigator.onLine) {
+                    offlineIndicator.classList.remove('show');
+                } else {
+                    offlineIndicator.classList.add('show');
+                }
+            }
+            
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            updateOnlineStatus();
+        }
+
+        // Notification functionality
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        notificationsEnabled = true;
+                        document.getElementById('notificationToggle').checked = true;
+                    }
+                });
+            }
+        }
+
+        function toggleNotifications() {
+            const badge = document.getElementById('notificationBadge');
+            badge.classList.toggle('hidden');
+            
+            if (notificationsEnabled && 'Notification' in window) {
+                new Notification('India Tours App', {
+                    body: 'Welcome to your travel companion!',
+                    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9IiM2NjdlZWEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIGZpbGw9IiM2NjdlZWEiLz48dGV4dCB4PSI2NCIgeT0iNjQiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn4+HPC90ZXh0Pjwvc3ZnPg=='
+                });
+            }
+        }
+
+        // Menu functionality
+        function toggleMenu() {
+            const menu = document.getElementById('sideMenu');
+            const panel = document.getElementById('menuPanel');
+            
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                setTimeout(() => {
+                    panel.style.transform = 'translateX(0)';
+                }, 10);
+            } else {
+                panel.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    menu.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // PWA Installation
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('Install prompt available');
+        });
+
+        // Install app functionality
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showNotification('🎉 App installed successfully!');
+                    } else {
+                        showNotification('App installation cancelled');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // Fallback instructions for different browsers
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                const isAndroid = /Android/.test(navigator.userAgent);
+                
+                let instructions = '';
+                
+                if (isIOS) {
+                    instructions = '📱 To install on iOS:\n\n1. Tap the Share button (⬆️)\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" to install';
+                } else if (isAndroid) {
+                    instructions = '📱 To install on Android:\n\n1. Tap the menu (⋮) in your browser\n2. Select "Add to Home Screen" or "Install App"\n3. Tap "Add" or "Install"';
+                } else {
+                    instructions = '📱 To install this app:\n\n1. Look for the install icon in your browser address bar\n2. Or use browser menu > "Install App"\n3. Follow the prompts to install';
+                }
+                
+                alert(instructions);
+            }
+            
+            // Register service worker for offline functionality
+            if ('serviceWorker' in navigator) {
+                const swCode = `
+                    const CACHE_NAME = 'india-tours-v1';
+                    const urlsToCache = ['/'];
+                    
+                    self.addEventListener('install', event => {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME)
+                                .then(cache => cache.addAll(urlsToCache))
+                        );
+                    });
+                    
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then(response => response || fetch(event.request))
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl)
+                    .then(registration => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            }
+        }
+
+        // Authentication functions
+        function showLogin() {
+            showPage('loginPage');
+            updateHeader('Login');
+        }
+
+        function showRegister() {
+            showPage('registerPage');
+            updateHeader('Register');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (email && password) {
+                isLoggedIn = true;
+                currentUser = { email: email, name: email.split('@')[0] };
+                updateAuthUI();
+                showLocationPage();
+                showNotification('Welcome back! Please select your location to continue.');
+            } else {
+                alert('Please enter valid credentials.');
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const phone = document.getElementById('registerPhone').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            if (name && email && phone && password) {
+                isLoggedIn = true;
+                currentUser = { email: email, name: name, phone: phone };
+                updateAuthUI();
+                showLocationPage();
+                showNotification('Registration successful! Please select your location to continue.');
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+            updateAuthUI();
+            goHome();
+            showNotification('You have been logged out successfully.');
+        }
+
+        function updateAuthUI() {
+            if (isLoggedIn && currentUser) {
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userEmail').textContent = currentUser.email;
+                document.getElementById('userInitials').textContent = currentUser.name.charAt(0).toUpperCase();
+            }
+        }
+
+        // Navigation functions
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+            
+            // Update bottom nav active state
+            document.querySelectorAll('.bottom-nav button').forEach(btn => {
+                btn.classList.remove('text-purple-600');
+                btn.classList.add('text-gray-500');
+            });
+        }
+
+        function updateHeader(title) {
+            document.getElementById('headerTitle').textContent = title;
+            const backBtn = document.getElementById('backBtn');
+            
+            if (title === '🇮🇳 India Tours') {
+                backBtn.classList.add('hidden');
+            } else {
+                backBtn.classList.remove('hidden');
+            }
+        }
+
+        function goHome() {
+            showPage('homePage');
+            updateHeader('🇮🇳 India Tours');
+            pageHistory = [];
+            
+            // Update bottom nav
+            document.querySelectorAll('.bottom-nav button').forEach(btn => {
+                btn.classList.remove('text-purple-600');
+                btn.classList.add('text-gray-500');
+            });
+            document.querySelector('.bottom-nav button').classList.add('text-purple-600');
+        }
+
+        function goBack() {
+            if (pageHistory.length > 0) {
+                const previousPage = pageHistory.pop();
+                showPage(previousPage);
+                updateHeader(getPageTitle(previousPage));
+            } else {
+                goHome();
+            }
+        }
+
+        function getPageTitle(pageId) {
+            const titles = {
+                'homePage': '🇮🇳 India Tours',
+                'regionPage': 'Places',
+                'travelPage': 'Travel Options',
+                'hotelsPage': 'Hotels',
+                'expensesPage': 'Trip Summary',
+                'profilePage': 'Profile',
+                'bookingsPage': 'My Bookings',
+                'settingsPage': 'Settings'
+            };
+            return titles[pageId] || '🇮🇳 India Tours';
+        }
+
+        // App-specific functions
+        function checkLoginAndProceed(region) {
+            if (!isLoggedIn) {
+                showNotification('Please login to continue your journey!');
+                showLogin();
+                return;
+            }
+            showRegion(region);
+        }
+
+        function showRegion(region) {
+            pageHistory.push('homePage');
+            currentRegion = region;
+            const regionNames = {
+                north: 'North India',
+                south: 'South India',
+                east: 'East India',
+                west: 'West India'
+            };
+            
+            updateHeader(`${regionNames[region]} Places`);
+            
+            const placesGrid = document.getElementById('placesGrid');
+            placesGrid.innerHTML = '';
+            
+            placesData[region].forEach(place => {
+                const placeCard = document.createElement('div');
+                placeCard.className = 'bg-white rounded-xl shadow-lg card-hover cursor-pointer overflow-hidden';
+                placeCard.onclick = () => selectPlace(place.name);
+                placeCard.innerHTML = `
+                    <img src="${place.image}" alt="${place.name}" class="place-image w-full" onerror="this.style.display='none';">
+                    <div class="p-4 text-center">
+                        <div class="text-3xl mb-2">${place.emoji}</div>
+                        <h3 class="text-lg font-bold mb-1">${place.name}</h3>
+                        <p class="text-gray-600 text-sm">${place.description}</p>
+                    </div>
+                `;
+                placesGrid.appendChild(placeCard);
+            });
+            
+            showPage('regionPage');
+        }
+
+        function selectPlace(place) {
+            selectedPlace = place;
+            selectedPlaceDetails = placeDetailsData[place] || null;
+            showPlaceDetails();
+        }
+
+        function showPlaceDetails() {
+            pageHistory.push('regionPage');
+            updateHeader('Place Details');
+            
+            const placeData = selectedPlaceDetails;
+            const placeInfo = placesData[currentRegion].find(p => p.name === selectedPlace);
+            
+            if (placeData && placeInfo) {
+                // Update place details
+                document.getElementById('placeDetailImage').src = placeInfo.image;
+                document.getElementById('placeDetailImage').alt = selectedPlace;
+                document.getElementById('placeDetailName').textContent = selectedPlace;
+                document.getElementById('placeRating').textContent = placeData.rating;
+                document.getElementById('placeLocation').textContent = selectedPlace.split(',')[1] || selectedPlace;
+                document.getElementById('placeDescription').textContent = placeData.fullDescription;
+                document.getElementById('bestTime').textContent = placeData.bestTime;
+                document.getElementById('recommendedDays').textContent = placeData.recommendedDays;
+                
+                // Update attractions
+                const attractionsDiv = document.getElementById('topAttractions');
+                attractionsDiv.innerHTML = '';
+                placeData.attractions.forEach(attraction => {
+                    const span = document.createElement('span');
+                    span.className = 'bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm';
+                    span.textContent = attraction;
+                    attractionsDiv.appendChild(span);
+                });
+                
+                // Update food
+                const foodDiv = document.getElementById('famousFood');
+                foodDiv.innerHTML = '';
+                placeData.food.forEach(food => {
+                    const span = document.createElement('span');
+                    span.className = 'bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm';
+                    span.textContent = food;
+                    foodDiv.appendChild(span);
+                });
+                
+                // Update tips
+                const tipsDiv = document.getElementById('travelTips');
+                tipsDiv.innerHTML = '';
+                placeData.tips.forEach(tip => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-start space-x-2 text-sm text-gray-700';
+                    div.innerHTML = `
+                        <span class="text-purple-500 mt-1">•</span>
+                        <span>${tip}</span>
+                    `;
+                    tipsDiv.appendChild(div);
+                });
+            } else {
+                // Fallback for places without detailed data
+                document.getElementById('placeDetailName').textContent = selectedPlace;
+                document.getElementById('placeDescription').textContent = 'A beautiful destination in India with rich culture and heritage.';
+            }
+            
+            showPage('placeDetailsPage');
+        }
+
+        function proceedToTravel() {
+            showTravel();
+        }
+
+        function showTravel() {
+            pageHistory.push('placeDetailsPage');
+            document.getElementById('selectedPlace').textContent = `From ${userLocation.city} to ${selectedPlace}`;
+            updateHeader('Travel Options');
+            
+            // Update travel costs based on distance
+            updateTravelCosts();
+            showPage('travelPage');
+        }
+
+        function updateTravelCosts() {
+            const distanceCategory = getDistanceCategory(selectedPlace);
+            const multiplier = distanceMultipliers[distanceCategory];
+            
+            // Update flight cost
+            const flightCard = document.querySelector('[onclick="selectTravel(\'flight\')"] .text-blue-600');
+            const baseFlight = (travelCosts.flight.min + travelCosts.flight.max) / 2;
+            const adjustedFlight = Math.round(baseFlight * multiplier.flight);
+            flightCard.textContent = `₹${(adjustedFlight * 0.8).toLocaleString()} - ₹${(adjustedFlight * 1.2).toLocaleString()}`;
+            
+            // Update train cost
+            const trainCard = document.querySelector('[onclick="selectTravel(\'train\')"] .text-green-600');
+            const baseTrain = (travelCosts.train.min + travelCosts.train.max) / 2;
+            const adjustedTrain = Math.round(baseTrain * multiplier.train);
+            trainCard.textContent = `₹${(adjustedTrain * 0.8).toLocaleString()} - ₹${(adjustedTrain * 1.2).toLocaleString()}`;
+            
+            // Update bus cost
+            const busCard = document.querySelector('[onclick="selectTravel(\'bus\')"] .text-purple-600');
+            const baseBus = (travelCosts.bus.min + travelCosts.bus.max) / 2;
+            const adjustedBus = Math.round(baseBus * multiplier.bus);
+            busCard.textContent = `₹${(adjustedBus * 0.8).toLocaleString()} - ₹${(adjustedBus * 1.2).toLocaleString()}`;
+        }
+
+        function skipTransport() {
+            selectedTravel = 'own';
+            showDuration();
+        }
+
+        function selectTravel(travel) {
+            selectedTravel = travel;
+            showDuration();
+        }
+
+        function showDuration() {
+            pageHistory.push('travelPage');
+            const travelNames = {
+                flight: 'Flight ✈️',
+                train: 'Train 🚂',
+                bus: 'Bus 🚌',
+                own: 'Own Transport 🚗'
+            };
+            document.getElementById('selectedTravelInfo').textContent = `Travel: ${travelNames[selectedTravel]}`;
+            updateHeader('Select Duration');
+            showPage('durationPage');
+        }
+
+        function selectDuration(days) {
+            selectedDuration = days;
+            showHotels();
+        }
+
+        function showCustomDuration() {
+            pageHistory.push('durationPage');
+            updateHeader('Custom Duration');
+            showPage('customDurationPage');
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('checkinDate').min = today;
+            document.getElementById('checkoutDate').min = today;
+            
+            // Add event listeners for date calculation
+            document.getElementById('checkinDate').addEventListener('change', calculateDays);
+            document.getElementById('checkoutDate').addEventListener('change', calculateDays);
+        }
+
+        function calculateDays() {
+            const checkin = document.getElementById('checkinDate').value;
+            const checkout = document.getElementById('checkoutDate').value;
+            
+            if (checkin && checkout) {
+                const checkinDate = new Date(checkin);
+                const checkoutDate = new Date(checkout);
+                
+                if (checkoutDate > checkinDate) {
+                    const timeDiff = checkoutDate.getTime() - checkinDate.getTime();
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    
+                    document.getElementById('totalDays').textContent = daysDiff;
+                    document.getElementById('totalNights').textContent = daysDiff - 1;
+                } else {
+                    document.getElementById('totalDays').textContent = '0';
+                    document.getElementById('totalNights').textContent = '0';
+                }
+            }
+        }
+
+        function confirmCustomDuration() {
+            const checkin = document.getElementById('checkinDate').value;
+            const checkout = document.getElementById('checkoutDate').value;
+            const days = parseInt(document.getElementById('totalDays').textContent);
+            
+            if (checkin && checkout && days > 0) {
+                selectedDuration = days;
+                selectedDates = { checkin, checkout };
+                showHotels();
+            } else {
+                alert('Please select valid check-in and check-out dates.');
+            }
+        }
+
+        function showHotels() {
+            pageHistory.push('durationPage');
+            const nights = selectedDuration - 1;
+            document.getElementById('selectedTravel').textContent = `Duration: ${selectedDuration} Days / ${nights} Nights`;
+            updateHeader('Hotels');
+            showPage('hotelsPage');
+        }
+
+        function selectHotel(hotel) {
+            selectedHotel = hotel;
+            showHotelSelection();
+        }
+
+        function showHotelSelection() {
+            pageHistory.push('hotelsPage');
+            updateHeader('Select Hotel');
+            
+            const categoryNames = {
+                '7star': '7 Star Luxury Hotels 👑',
+                '5star': '5 Star Premium Hotels ⭐',
+                'deluxe': 'Deluxe Hotels 🏨'
+            };
+            
+            document.getElementById('selectedHotelCategory').textContent = categoryNames[selectedHotel];
+            
+            const hotelsList = document.getElementById('hotelsList');
+            hotelsList.innerHTML = '';
+            
+            hotelsData[selectedHotel].forEach((hotel, index) => {
+                const hotelCard = document.createElement('div');
+                hotelCard.className = 'bg-white rounded-xl shadow-lg overflow-hidden card-hover cursor-pointer';
+                hotelCard.onclick = () => selectSpecificHotel(hotel);
+                
+                hotelCard.innerHTML = `
+                    <div class="relative">
+                        <img src="${hotel.image}" alt="${hotel.name}" class="w-full h-48 object-cover" onerror="this.style.display='none';">
+                        <div class="absolute top-3 right-3 bg-white bg-opacity-90 px-2 py-1 rounded-lg">
+                            <div class="flex items-center">
+                                <span class="text-yellow-500 text-sm">★</span>
+                                <span class="text-sm font-bold ml-1">${hotel.rating}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg font-bold text-gray-800">${hotel.name}</h3>
+                            <div class="text-right">
+                                <div class="text-xl font-bold text-green-600">₹${hotel.price.toLocaleString()}</div>
+                                <div class="text-sm text-gray-600">per night</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center text-gray-600 mb-3">
+                            <span class="text-sm">📍 ${hotel.location}</span>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-3">${hotel.description}</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            ${hotel.amenities.slice(0, 3).map(amenity => 
+                                `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">${amenity}</span>`
+                            ).join('')}
+                            ${hotel.amenities.length > 3 ? 
+                                `<span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">+${hotel.amenities.length - 3} more</span>` 
+                                : ''
+                            }
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm text-gray-600">
+                                ${selectedDuration - 1} nights = ₹${(hotel.price * (selectedDuration - 1)).toLocaleString()}
+                            </div>
+                            <button class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg font-bold hover:from-purple-600 hover:to-pink-600 transition-all">
+                                Select Hotel
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                hotelsList.appendChild(hotelCard);
+            });
+            
+            showPage('hotelSelectionPage');
+        }
+
+        function selectSpecificHotel(hotel) {
+            selectedHotelDetails = hotel;
+            showExpenses();
+        }
+
+        function showExpenses() {
+            pageHistory.push('hotelSelectionPage');
+            updateHeader('Trip Summary');
+            
+            // Update trip details
+            document.getElementById('finalDestination').textContent = selectedPlace;
+            
+            const travelNames = {
+                flight: 'Flight ✈️',
+                train: 'Train 🚂',
+                bus: 'Bus 🚌',
+                own: 'Own Transport 🚗'
+            };
+            document.getElementById('finalTravel').textContent = travelNames[selectedTravel];
+            
+            // Use selected hotel details
+            document.getElementById('finalHotel').textContent = selectedHotelDetails ? selectedHotelDetails.name : 'Hotel Selected';
+            
+            // Calculate costs based on duration, selected hotel, and location
+            const nights = selectedDuration - 1;
+            const distanceCategory = getDistanceCategory(selectedPlace);
+            const multiplier = distanceMultipliers[distanceCategory];
+            
+            // Calculate travel cost with distance multiplier
+            const baseTravelCost = Math.round((travelCosts[selectedTravel].min + travelCosts[selectedTravel].max) / 2);
+            const travelCost = selectedTravel === 'own' ? 0 : Math.round(baseTravelCost * multiplier[selectedTravel]);
+            const totalHotelCost = selectedHotelDetails ? selectedHotelDetails.price * nights : 0;
+            
+            const foodCostPerDay = 1500;
+            const foodCost = foodCostPerDay * selectedDuration;
+            const localTransportPerDay = 500;
+            const localTransport = localTransportPerDay * selectedDuration;
+            const sightseeingPerDay = 800;
+            const sightseeing = sightseeingPerDay * selectedDuration;
+            
+            totalCost = travelCost + totalHotelCost + foodCost + localTransport + sightseeing;
+            
+            // Update duration display
+            document.getElementById('finalDuration').textContent = `${selectedDuration} Days / ${nights} Nights`;
+            
+            // Update cost display
+            document.getElementById('travelCost').textContent = `₹${travelCost.toLocaleString()}`;
+            document.getElementById('hotelCost').textContent = `₹${totalHotelCost.toLocaleString()}`;
+            document.getElementById('foodCost').textContent = `₹${foodCost.toLocaleString()}`;
+            document.getElementById('localTransportCost').textContent = `₹${localTransport.toLocaleString()}`;
+            document.getElementById('sightseeingCost').textContent = `₹${sightseeing.toLocaleString()}`;
+            document.getElementById('totalCost').textContent = `₹${totalCost.toLocaleString()}`;
+            
+            showPage('expensesPage');
+        }
+
+        function bookTrip() {
+            showPayment();
+        }
+
+        function showPayment() {
+            pageHistory.push('expensesPage');
+            updateHeader('Payment');
+            
+            // Update payment summary
+            document.getElementById('paymentDestination').textContent = selectedPlace;
+            const nights = selectedDuration - 1;
+            document.getElementById('paymentDuration').textContent = `${selectedDuration} Days / ${nights} Nights`;
+            document.getElementById('paymentTotal').textContent = `₹${totalCost.toLocaleString()}`;
+            
+            showPage('paymentPage');
+        }
+
+        function selectPayment(method) {
+            const paymentMethods = {
+                googlepay: { name: 'Google Pay', icon: '💳' },
+                phonepe: { name: 'PhonePe', icon: '📱' },
+                paytm: { name: 'Paytm', icon: '💰' },
+                upi: { name: 'UPI', icon: '🏦' },
+                card: { name: 'Credit/Debit Card', icon: '💳' },
+                netbanking: { name: 'Net Banking', icon: '🏛️' }
+            };
+            
+            const selectedMethod = paymentMethods[method];
+            
+            // Show processing page
+            updateHeader('Processing Payment');
+            document.getElementById('paymentIcon').textContent = selectedMethod.icon;
+            document.getElementById('paymentMethodName').textContent = selectedMethod.name;
+            document.getElementById('paymentAmount').textContent = `₹${totalCost.toLocaleString()}`;
+            showPage('paymentProcessingPage');
+            
+            // Simulate payment processing
+            setTimeout(() => {
+                showPaymentSuccess();
+            }, 3000);
+        }
+
+        function showPaymentSuccess() {
+            updateHeader('Payment Success');
+            
+            // Generate booking ID
+            const bookingId = 'IT' + Date.now().toString().slice(-6);
+            document.getElementById('bookingId').textContent = bookingId;
+            document.getElementById('confirmedDestination').textContent = selectedPlace;
+            const nights = selectedDuration - 1;
+            document.getElementById('confirmedDuration').textContent = `${selectedDuration} Days / ${nights} Nights`;
+            document.getElementById('confirmedAmount').textContent = `₹${totalCost.toLocaleString()}`;
+            
+            // Add booking to user's booking list
+            const newBooking = {
+                id: bookingId,
+                destination: selectedPlace,
+                region: currentRegion,
+                duration: selectedDuration,
+                nights: nights,
+                amount: totalCost,
+                travel: selectedTravel,
+                hotel: selectedHotelDetails,
+                bookingDate: new Date(),
+                status: 'confirmed',
+                dates: selectedDates.checkin ? selectedDates : null
+            };
+            
+            userBookings.push(newBooking);
+            
+            showPage('paymentSuccessPage');
+            
+            // Show success notification
+            showNotification('🎉 Payment successful! Your trip is confirmed.');
+        }
+
+        function downloadTicket() {
+            // Create a simple ticket content
+            const ticketContent = `
+INDIA TOURS - E-TICKET
+======================
+Booking ID: ${document.getElementById('bookingId').textContent}
+Destination: ${selectedPlace}
+Duration: ${selectedDuration} Days / ${selectedDuration - 1} Nights
+Amount: ₹${totalCost.toLocaleString()}
+Booked on: ${new Date().toLocaleDateString()}
+
+Thank you for choosing India Tours!
+Contact: support@indiatours.com
+            `;
+            
+            // Create and download file
+            const blob = new Blob([ticketContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `IndiaToursTicket_${document.getElementById('bookingId').textContent}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('📄 E-ticket downloaded successfully!');
+        }
+
+        // Bottom navigation functions
+        function showSearch() {
+            showNotification('🔍 Search feature coming soon!');
+        }
+
+        function showProfile() {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            pageHistory.push('homePage');
+            updateHeader('Profile');
+            showPage('profilePage');
+            
+            // Update bottom nav
+            document.querySelectorAll('.bottom-nav button').forEach(btn => {
+                btn.classList.remove('text-purple-600');
+                btn.classList.add('text-gray-500');
+            });
+            document.querySelectorAll('.bottom-nav button')[3].classList.add('text-purple-600');
+        }
+
+        function showBookings() {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            pageHistory.push('homePage');
+            updateHeader('My Bookings');
+            
+            // Populate bookings list
+            populateBookingsList();
+            
+            // Start real-time updates
+            startBookingUpdates();
+            
+            showPage('bookingsPage');
+            
+            // Update bottom nav
+            document.querySelectorAll('.bottom-nav button').forEach(btn => {
+                btn.classList.remove('text-purple-600');
+                btn.classList.add('text-gray-500');
+            });
+            document.querySelectorAll('.bottom-nav button')[2].classList.add('text-purple-600');
+        }
+
+        function populateBookingsList() {
+            const bookingsList = document.getElementById('bookingsList');
+            
+            if (userBookings.length === 0) {
+                // Add some sample bookings for demo
+                userBookings = [
+                    {
+                        id: 'IT123456',
+                        destination: 'Taj Mahal, Agra',
+                        region: 'north',
+                        duration: 3,
+                        nights: 2,
+                        amount: 25000,
+                        travel: 'train',
+                        bookingDate: new Date('2024-02-15'),
+                        status: 'confirmed',
+                        dates: { checkin: '2024-03-15', checkout: '2024-03-18' }
+                    },
+                    {
+                        id: 'IT789012',
+                        destination: 'Backwaters, Kerala',
+                        region: 'south',
+                        duration: 5,
+                        nights: 4,
+                        amount: 35000,
+                        travel: 'flight',
+                        bookingDate: new Date('2024-02-20'),
+                        status: 'upcoming',
+                        dates: { checkin: '2024-04-10', checkout: '2024-04-15' }
+                    },
+                    {
+                        id: 'IT345678',
+                        destination: 'Gateway of India, Mumbai',
+                        region: 'west',
+                        duration: 4,
+                        nights: 3,
+                        amount: 28000,
+                        travel: 'flight',
+                        bookingDate: new Date('2024-01-10'),
+                        status: 'completed',
+                        dates: { checkin: '2024-01-25', checkout: '2024-01-29' }
+                    }
+                ];
+            }
+            
+            bookingsList.innerHTML = '';
+            
+            if (userBookings.length === 0) {
+                bookingsList.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="text-4xl mb-2">📋</div>
+                        <p>No bookings yet</p>
+                        <button onclick="goHome()" class="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg font-bold hover:from-purple-600 hover:to-pink-600 transition-all">
+                            Explore Destinations
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            userBookings.forEach(booking => {
+                const statusColors = {
+                    'confirmed': 'bg-green-100 text-green-800',
+                    'upcoming': 'bg-blue-100 text-blue-800',
+                    'completed': 'bg-gray-100 text-gray-800',
+                    'cancelled': 'bg-red-100 text-red-800'
+                };
+                
+                const statusIcons = {
+                    'confirmed': '✅',
+                    'upcoming': '🕒',
+                    'completed': '✨',
+                    'cancelled': '❌'
+                };
+                
+                const travelIcons = {
+                    'flight': '✈️',
+                    'train': '🚂',
+                    'bus': '🚌',
+                    'own': '🚗'
+                };
+                
+                const bookingCard = document.createElement('div');
+                bookingCard.className = 'bg-white rounded-xl shadow-lg p-4 card-hover cursor-pointer';
+                bookingCard.onclick = () => showBookingDetails(booking);
+                
+                const dateStr = booking.dates ? 
+                    `${new Date(booking.dates.checkin).toLocaleDateString()} - ${new Date(booking.dates.checkout).toLocaleDateString()}` :
+                    `${booking.duration} Days / ${booking.nights} Nights`;
+                
+                bookingCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <h3 class="font-bold text-lg mr-2">${booking.destination}</h3>
+                                <span class="text-lg">${travelIcons[booking.travel] || '🚗'}</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-1">📅 ${dateStr}</p>
+                            <p class="text-gray-600 text-sm">🆔 ${booking.id}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="${statusColors[booking.status]} px-3 py-1 rounded-full text-sm font-semibold mb-2 inline-block">
+                                ${statusIcons[booking.status]} ${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                            </span>
+                            <div class="text-xl font-bold text-purple-600">₹${booking.amount.toLocaleString()}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                        <div class="text-sm text-gray-500">
+                            Booked on ${booking.bookingDate.toLocaleDateString()}
+                        </div>
+                        <div class="flex space-x-2">
+                            ${booking.status === 'upcoming' ? 
+                                '<button onclick="event.stopPropagation(); modifyBooking(\'' + booking.id + '\')" class="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">Modify</button>' : ''
+                            }
+                            <button onclick="event.stopPropagation(); showBookingOnMap('${booking.id}')" class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
+                                📍 Map
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                bookingsList.appendChild(bookingCard);
+            });
+        }
+
+        function startBookingUpdates() {
+            // Clear existing interval
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+            
+            // Simulate real-time updates
+            updateInterval = setInterval(() => {
+                updateBookingStatus();
+                updateLastUpdateTime();
+            }, 30000); // Update every 30 seconds
+            
+            // Initial update
+            updateBookingStatus();
+        }
+
+        function updateBookingStatus() {
+            const updateMessages = [
+                'All bookings confirmed ✅',
+                'Checking flight schedules...',
+                'Hotel availability verified 🏨',
+                'Weather updates received 🌤️',
+                'Local transport arranged 🚗',
+                'Tour guides assigned 👨‍🏫',
+                'Special offers available! 🎉'
+            ];
+            
+            const randomMessage = updateMessages[Math.floor(Math.random() * updateMessages.length)];
+            document.getElementById('liveUpdateText').textContent = randomMessage;
+            
+            // Simulate status changes occasionally
+            if (Math.random() < 0.1) { // 10% chance
+                userBookings.forEach(booking => {
+                    if (booking.status === 'confirmed' && Math.random() < 0.3) {
+                        // Sometimes add special offers or updates
+                        showNotification(`🎉 Special offer available for your ${booking.destination} trip!`);
+                    }
+                });
+            }
+        }
+
+        function updateLastUpdateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('lastUpdateTime').textContent = timeStr;
+        }
+
+        function showBookingMap() {
+            pageHistory.push('bookingsPage');
+            updateHeader('Travel Map');
+            
+            // Update map with bookings
+            updateMapWithBookings();
+            
+            showPage('bookingMapPage');
+        }
+
+        function updateMapWithBookings() {
+            const bookingMarkers = document.getElementById('bookingMarkers');
+            bookingMarkers.innerHTML = '';
+            
+            // Region coordinates for placing markers
+            const regionCoords = {
+                'north': { x: 400, y: 200 },
+                'south': { x: 450, y: 400 },
+                'east': { x: 550, y: 300 },
+                'west': { x: 300, y: 300 }
+            };
+            
+            // Count bookings by region
+            const regionCounts = { north: 0, south: 0, east: 0, west: 0 };
+            let totalDestinations = 0;
+            let totalDistance = 0;
+            
+            userBookings.forEach((booking, index) => {
+                const region = booking.region;
+                regionCounts[region]++;
+                totalDestinations++;
+                
+                // Estimate distance (simplified)
+                totalDistance += booking.duration * 200; // Rough estimate
+                
+                const coords = regionCoords[region];
+                if (coords) {
+                    // Offset multiple bookings in same region
+                    const offset = regionCounts[region] * 15;
+                    const x = coords.x + (offset * Math.cos(index));
+                    const y = coords.y + (offset * Math.sin(index));
+                    
+                    const statusColors = {
+                        'confirmed': '#ef4444',
+                        'upcoming': '#f59e0b',
+                        'completed': '#6b7280',
+                        'cancelled': '#dc2626'
+                    };
+                    
+                    const marker = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    marker.setAttribute('cx', x);
+                    marker.setAttribute('cy', y);
+                    marker.setAttribute('r', '6');
+                    marker.setAttribute('fill', statusColors[booking.status]);
+                    marker.setAttribute('stroke', 'white');
+                    marker.setAttribute('stroke-width', '2');
+                    marker.setAttribute('class', 'cursor-pointer hover:r-8 transition-all');
+                    marker.setAttribute('onclick', `showBookingDetails('${booking.id}')`);
+                    
+                    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                    title.textContent = `${booking.destination} - ${booking.status}`;
+                    marker.appendChild(title);
+                    
+                    bookingMarkers.appendChild(marker);
+                }
+            });
+            
+            // Update stats
+            document.getElementById('totalDestinations').textContent = totalDestinations;
+            document.getElementById('totalDistance').textContent = `${totalDistance.toLocaleString()} km`;
+            
+            // Update region markers based on booking counts
+            Object.keys(regionCounts).forEach(region => {
+                const marker = document.getElementById(`${region}Marker`);
+                if (marker && regionCounts[region] > 0) {
+                    marker.setAttribute('r', Math.min(12, 8 + regionCounts[region] * 2));
+                    marker.setAttribute('fill', '#10b981');
+                }
+            });
+        }
+
+        function showRegionBookings(region) {
+            const regionNames = {
+                'north': 'North India',
+                'south': 'South India',
+                'east': 'East India',
+                'west': 'West India'
+            };
+            
+            const regionBookings = userBookings.filter(booking => booking.region === region);
+            const regionDetails = document.getElementById('regionDetails');
+            const regionTitle = document.getElementById('regionTitle');
+            const regionBookingsDiv = document.getElementById('regionBookings');
+            
+            regionTitle.textContent = `${regionNames[region]} Bookings`;
+            regionBookingsDiv.innerHTML = '';
+            
+            if (regionBookings.length === 0) {
+                regionBookingsDiv.innerHTML = `
+                    <div class="text-center py-4 text-gray-500">
+                        <div class="text-2xl mb-2">🗺️</div>
+                        <p>No bookings in this region yet</p>
+                        <button onclick="goHome()" class="mt-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg font-bold hover:from-purple-600 hover:to-pink-600 transition-all">
+                            Explore ${regionNames[region]}
+                        </button>
+                    </div>
+                `;
+            } else {
+                regionBookings.forEach(booking => {
+                    const bookingDiv = document.createElement('div');
+                    bookingDiv.className = 'flex justify-between items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100';
+                    bookingDiv.onclick = () => showBookingDetails(booking);
+                    
+                    bookingDiv.innerHTML = `
+                        <div>
+                            <div class="font-semibold">${booking.destination}</div>
+                            <div class="text-sm text-gray-600">${booking.status} • ₹${booking.amount.toLocaleString()}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500">${booking.id}</div>
+                        </div>
+                    `;
+                    
+                    regionBookingsDiv.appendChild(bookingDiv);
+                });
+            }
+            
+            regionDetails.classList.remove('hidden');
+        }
+
+        function showBookingOnMap(bookingId) {
+            const booking = userBookings.find(b => b.id === bookingId);
+            if (booking) {
+                showBookingMap();
+                setTimeout(() => {
+                    showRegionBookings(booking.region);
+                }, 500);
+            }
+        }
+
+        function showBookingDetails(booking) {
+            if (typeof booking === 'string') {
+                booking = userBookings.find(b => b.id === booking);
+            }
+            
+            if (!booking) return;
+            
+            const details = `
+Booking Details:
+================
+ID: ${booking.id}
+Destination: ${booking.destination}
+Duration: ${booking.duration} Days / ${booking.nights} Nights
+Amount: ₹${booking.amount.toLocaleString()}
+Status: ${booking.status.toUpperCase()}
+Travel: ${booking.travel.toUpperCase()}
+Booked: ${booking.bookingDate.toLocaleDateString()}
+${booking.dates ? `Dates: ${booking.dates.checkin} to ${booking.dates.checkout}` : ''}
+            `;
+            
+            alert(details);
+        }
+
+        function modifyBooking(bookingId) {
+            const booking = userBookings.find(b => b.id === bookingId);
+            if (booking && booking.status === 'upcoming') {
+                const options = [
+                    'Change dates',
+                    'Upgrade hotel',
+                    'Modify travel mode',
+                    'Add extra services',
+                    'Cancel booking'
+                ];
+                
+                const choice = prompt(`Modify booking ${bookingId}:\n\n${options.map((opt, i) => `${i + 1}. ${opt}`).join('\n')}\n\nEnter your choice (1-5):`);
+                
+                if (choice && choice >= 1 && choice <= 5) {
+                    showNotification(`🔄 Modification request submitted for ${options[choice - 1]}. Our team will contact you soon.`);
+                }
+            }
+        }
+
+        function showSettings() {
+            pageHistory.push('homePage');
+            updateHeader('Settings');
+            showPage('settingsPage');
+        }
+
+        // Google Maps integration functions
+        function openGoogleMapsDirections() {
+            const origin = encodeURIComponent(`${userLocation.city}, ${getStateName(userLocation.state)}, India`);
+            const destination = encodeURIComponent(getDestinationAddress(selectedPlace));
+            const travelMode = getTravelModeForMaps(selectedTravel);
+            
+            const mapsUrl = `https://www.google.com/maps/dir/${origin}/${destination}/@?api=1&travelmode=${travelMode}`;
+            
+            // Open in new tab/window
+            window.open(mapsUrl, '_blank');
+            
+            showNotification('🗺️ Opening Google Maps directions in new tab!');
+        }
+
+        function openGoogleMapsExplore() {
+            const destination = encodeURIComponent(getDestinationAddress(selectedPlace));
+            const mapsUrl = `https://www.google.com/maps/search/${destination}/@?api=1`;
+            
+            window.open(mapsUrl, '_blank');
+            showNotification('📍 Exploring destination area on Google Maps!');
+        }
+
+        function openHotelOnMap() {
+            if (selectedHotelDetails) {
+                const hotelQuery = encodeURIComponent(`${selectedHotelDetails.name} ${getDestinationCity(selectedPlace)}`);
+                const mapsUrl = `https://www.google.com/maps/search/${hotelQuery}/@?api=1`;
+                
+                window.open(mapsUrl, '_blank');
+                showNotification('🏨 Opening hotel location on Google Maps!');
+            }
+        }
+
+        function getTravelModeForMaps(travel) {
+            const modes = {
+                'flight': 'transit',
+                'train': 'transit',
+                'bus': 'transit',
+                'own': 'driving'
+            };
+            return modes[travel] || 'driving';
+        }
+
+        function getStateName(stateCode) {
+            const stateNames = {
+                'maharashtra': 'Maharashtra',
+                'delhi': 'Delhi',
+                'karnataka': 'Karnataka',
+                'tamil_nadu': 'Tamil Nadu',
+                'gujarat': 'Gujarat',
+                'rajasthan': 'Rajasthan',
+                'west_bengal': 'West Bengal',
+                'uttar_pradesh': 'Uttar Pradesh',
+                'kerala': 'Kerala',
+                'punjab': 'Punjab',
+                'haryana': 'Haryana',
+                'bihar': 'Bihar',
+                'odisha': 'Odisha',
+                'assam': 'Assam',
+                'telangana': 'Telangana',
+                'andhra_pradesh': 'Andhra Pradesh'
+            };
+            return stateNames[stateCode] || stateCode;
+        }
+
+        function getDestinationAddress(place) {
+            // Extract city and state from place name
+            const placeMapping = {
+                'Taj Mahal, Agra': 'Taj Mahal, Agra, Uttar Pradesh, India',
+                'Red Fort, Delhi': 'Red Fort, Delhi, India',
+                'Jaipur, Rajasthan': 'Jaipur, Rajasthan, India',
+                'Backwaters, Kerala': 'Alleppey Backwaters, Kerala, India',
+                'Goa Beaches': 'Baga Beach, Goa, India',
+                'Gateway of India, Mumbai': 'Gateway of India, Mumbai, Maharashtra, India',
+                'Victoria Memorial, Kolkata': 'Victoria Memorial, Kolkata, West Bengal, India',
+                'Darjeeling': 'Darjeeling, West Bengal, India',
+                'Mysore Palace': 'Mysore Palace, Mysore, Karnataka, India',
+                'Ooty, Tamil Nadu': 'Ooty, Tamil Nadu, India',
+                'Hampi, Karnataka': 'Hampi, Karnataka, India',
+                'Munnar, Kerala': 'Munnar, Kerala, India'
+            };
+            
+            return placeMapping[place] || `${place}, India`;
+        }
+
+        function getDestinationCity(place) {
+            const cityMapping = {
+                'Taj Mahal, Agra': 'Agra',
+                'Red Fort, Delhi': 'Delhi',
+                'Jaipur, Rajasthan': 'Jaipur',
+                'Backwaters, Kerala': 'Alleppey',
+                'Goa Beaches': 'Goa',
+                'Gateway of India, Mumbai': 'Mumbai',
+                'Victoria Memorial, Kolkata': 'Kolkata',
+                'Darjeeling': 'Darjeeling',
+                'Mysore Palace': 'Mysore',
+                'Ooty, Tamil Nadu': 'Ooty',
+                'Hampi, Karnataka': 'Hampi',
+                'Munnar, Kerala': 'Munnar'
+            };
+            
+            return cityMapping[place] || place.split(',')[0];
+        }
+
+        function calculateEstimatedDistance() {
+            // Simplified distance calculation based on regions and major cities
+            const distanceData = {
+                'mumbai-agra': { distance: '1150 km', time: '18h by train' },
+                'mumbai-delhi': { distance: '1400 km', time: '16h by train' },
+                'mumbai-jaipur': { distance: '1150 km', time: '15h by train' },
+                'mumbai-kerala': { distance: '1200 km', time: '20h by train' },
+                'mumbai-goa': { distance: '460 km', time: '8h by train' },
+                'mumbai-kolkata': { distance: '2000 km', time: '28h by train' },
+                'delhi-agra': { distance: '230 km', time: '3h by train' },
+                'delhi-jaipur': { distance: '280 km', time: '4h by train' },
+                'delhi-mumbai': { distance: '1400 km', time: '16h by train' },
+                'delhi-kerala': { distance: '2200 km', time: '36h by train' },
+                'bangalore-kerala': { distance: '460 km', time: '8h by train' },
+                'bangalore-goa': { distance: '560 km', time: '10h by train' },
+                'kolkata-darjeeling': { distance: '640 km', time: '12h by train' }
+            };
+            
+            const origin = userLocation.city.toLowerCase();
+            const destination = getDestinationCity(selectedPlace).toLowerCase();
+            const key = `${origin}-${destination}`;
+            const reverseKey = `${destination}-${origin}`;
+            
+            let travelInfo = distanceData[key] || distanceData[reverseKey];
+            
+            if (!travelInfo) {
+                // Default estimates based on regions
+                const distanceCategory = getDistanceCategory(selectedPlace);
+                const estimates = {
+                    'same_state': { distance: '300 km', time: '5h' },
+                    'nearby_state': { distance: '800 km', time: '12h' },
+                    'far_state': { distance: '1500 km', time: '20h' },
+                    'very_far': { distance: '2000 km', time: '30h' }
+                };
+                travelInfo = estimates[distanceCategory];
+            }
+            
+            return travelInfo;
+        }
+
+        // Utility functions
+        function showTripDetails() {
+            pageHistory.push('paymentSuccessPage');
+            updateHeader('Trip Details');
+            
+            // Update route information
+            document.getElementById('tripOrigin').textContent = 'From: ' + userLocation.city;
+            document.getElementById('tripOriginCity').textContent = getStateName(userLocation.state);
+            document.getElementById('tripDestination').textContent = 'To: ' + getDestinationCity(selectedPlace);
+            document.getElementById('tripDestinationCity').textContent = selectedPlace.split(',')[1] || '';
+            
+            // Calculate and display travel estimates
+            const travelInfo = calculateEstimatedDistance();
+            document.getElementById('estimatedDistance').textContent = travelInfo.distance;
+            document.getElementById('estimatedTime').textContent = travelInfo.time;
+            
+            // Update travel mode icon
+            const travelIcons = {
+                'flight': '✈️',
+                'train': '🚂',
+                'bus': '🚌',
+                'own': '🚗'
+            };
+            document.getElementById('travelMode').textContent = travelIcons[selectedTravel] || '🚗';
+            
+            // Populate hotel details
+            const hotelDetailsDiv = document.getElementById('tripHotelDetails');
+            if (selectedHotelDetails) {
+                hotelDetailsDiv.innerHTML = `
+                    <div class="flex items-start space-x-4">
+                        <img src="${selectedHotelDetails.image}" alt="${selectedHotelDetails.name}" class="w-20 h-20 object-cover rounded-lg" onerror="this.style.display='none';">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-lg">${selectedHotelDetails.name}</h4>
+                            <p class="text-gray-600 flex items-center"><span class="mr-1">📍</span>${selectedHotelDetails.location}</p>
+                            <p class="text-gray-600 flex items-center"><span class="mr-1">⭐</span>${selectedHotelDetails.rating} Rating</p>
+                            <p class="text-green-600 font-bold">₹${selectedHotelDetails.price.toLocaleString()} per night</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h5 class="font-semibold mb-2">Amenities:</h5>
+                        <div class="flex flex-wrap gap-2">
+                            ${selectedHotelDetails.amenities.map(amenity => 
+                                `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">${amenity}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-700">${selectedHotelDetails.description}</p>
+                    </div>
+                `;
+            }
+            
+            // Generate day-wise itinerary
+            const itineraryDiv = document.getElementById('dayWiseItinerary');
+            const destinationData = itineraryData[selectedPlace] || {
+                attractions: ['Local Sightseeing', 'Cultural Sites', 'Shopping Areas', 'Scenic Spots', 'Historical Places'],
+                activities: ['City Tour', 'Local Cuisine', 'Shopping', 'Photography', 'Cultural Experience']
+            };
+            
+            let itineraryHTML = '';
+            
+            for (let day = 1; day <= selectedDuration; day++) {
+                const isArrivalDay = day === 1;
+                const isDepartureDay = day === selectedDuration;
+                
+                let dayActivities = [];
+                let dayAttractions = [];
+                
+                if (isArrivalDay) {
+                    dayActivities = ['Arrival & Check-in', 'Welcome Drink', 'Rest & Freshen Up', 'Local Area Exploration'];
+                    dayAttractions = ['Hotel Area', destinationData.attractions[0] || 'Local Market'];
+                } else if (isDepartureDay && selectedDuration > 1) {
+                    dayActivities = ['Check-out', 'Last Minute Shopping', 'Departure Preparation', 'Journey Back'];
+                    dayAttractions = ['Hotel', 'Shopping Area', 'Transport Hub'];
+                } else {
+                    // Distribute attractions and activities across middle days
+                    const middleDays = selectedDuration - 2;
+                    const startIndex = (day - 2) * 2;
+                    dayAttractions = destinationData.attractions.slice(startIndex, startIndex + 2);
+                    dayActivities = destinationData.activities.slice(startIndex, startIndex + 2);
+                    
+                    // Add some common activities
+                    dayActivities.push('Local Cuisine Experience', 'Photography Session');
+                }
+                
+                itineraryHTML += `
+                    <div class="border-l-4 border-purple-500 pl-4 pb-4">
+                        <div class="flex items-center mb-2">
+                            <div class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                                ${day}
+                            </div>
+                            <h4 class="font-bold text-lg">Day ${day}</h4>
+                            ${isArrivalDay ? '<span class="ml-2 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Arrival</span>' : ''}
+                            ${isDepartureDay && selectedDuration > 1 ? '<span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Departure</span>' : ''}
+                        </div>
+                        
+                        <div class="ml-11 space-y-3">
+                            <div>
+                                <h5 class="font-semibold text-gray-700 mb-2">🏛️ Places to Visit:</h5>
+                                <div class="flex flex-wrap gap-2">
+                                    ${dayAttractions.map(attraction => 
+                                        `<span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg text-sm">${attraction}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 class="font-semibold text-gray-700 mb-2">🎯 Activities:</h5>
+                                <div class="flex flex-wrap gap-2">
+                                    ${dayActivities.map(activity => 
+                                        `<span class="bg-orange-50 text-orange-700 px-3 py-1 rounded-lg text-sm">${activity}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                            
+                            <div class="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                                <strong>Recommended Time:</strong> 
+                                ${isArrivalDay ? 'Afternoon arrival, evening local exploration' : 
+                                  isDepartureDay && selectedDuration > 1 ? 'Morning checkout, afternoon departure' : 
+                                  'Full day sightseeing (9 AM - 6 PM)'}
+                            </div>
+                            
+                            ${!isArrivalDay && !(isDepartureDay && selectedDuration > 1) ? `
+                                <button onclick="openDayAttractionsOnMap(${day})" class="mt-3 w-full bg-gradient-to-r from-purple-500 to-purple-700 text-white py-2 px-4 rounded-lg font-bold hover:from-purple-600 hover:to-purple-800 transition-all text-sm">
+                                    🗺️ View Day ${day} Attractions on Map
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            itineraryDiv.innerHTML = itineraryHTML;
+            showPage('tripDetailsPage');
+        }
+
+        function openDayAttractionsOnMap(day) {
+            const destinationData = itineraryData[selectedPlace] || {
+                attractions: ['Local Sightseeing', 'Cultural Sites', 'Shopping Areas', 'Scenic Spots', 'Historical Places']
+            };
+            
+            // Get attractions for the specific day
+            const startIndex = (day - 2) * 2; // Day 1 is arrival, so day 2 starts at index 0
+            const dayAttractions = destinationData.attractions.slice(startIndex, startIndex + 2);
+            
+            if (dayAttractions.length > 0) {
+                const destinationCity = getDestinationCity(selectedPlace);
+                const attractionsQuery = dayAttractions.map(attraction => 
+                    `${attraction} ${destinationCity}`
+                ).join(' OR ');
+                
+                const encodedQuery = encodeURIComponent(attractionsQuery);
+                const mapsUrl = `https://www.google.com/maps/search/${encodedQuery}/@?api=1`;
+                
+                window.open(mapsUrl, '_blank');
+                showNotification(`🗺️ Opening Day ${day} attractions on Google Maps!`);
+            } else {
+                // Fallback to general destination search
+                openGoogleMapsExplore();
+            }
+        }
+
+        function showNotification(message) {
+            if (notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
+                new Notification('India Tours', {
+                    body: message,
+                    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9IiM2NjdlZWEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIGZpbGw9IiM2NjdlZWEiLz48dGV4dCB4PSI2NCIgeT0iNjQiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn4+HPC90ZXh0Pjwvc3ZnPg=='
+                });
+            } else {
+                alert(message);
+            }
+        }
+
+        // Touch gestures for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe left - could implement next page
+                } else {
+                    // Swipe right - go back
+                    if (pageHistory.length > 0) {
+                        goBack();
+                    }
+                }
+            }
+        }
+
+        // Initialize app
+        updateAuthUI();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f21a3310669380',t:'MTc1Nzg3NjE2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
