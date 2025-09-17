@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr.Travel - Your Journey Begins Here</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .hero-bg { background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23FF6B6B" width="1200" height="600"/><circle fill="%23FFE66D" cx="200" cy="150" r="80"/><rect fill="%234ECDC4" x="300" y="200" width="200" height="150" rx="20"/><polygon fill="%2395E1D3" points="600,100 700,200 500,200"/><circle fill="%23F38BA8" cx="900" cy="300" r="100"/></svg>'); background-size: cover; background-position: center; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-map-marked-alt text-2xl text-blue-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Mr.Travel</span>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#" class="text-gray-600 hover:text-blue-600">Home</a>
+                    <a href="#" class="text-gray-600 hover:text-blue-600">Destinations</a>
+                    <a href="#" class="text-gray-600 hover:text-blue-600">About</a>
+                    <a href="#" class="text-gray-600 hover:text-blue-600">Contact</a>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="showLogin()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Login</button>
+                    <button onclick="showRegister()" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50">Register</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div id="mainContent" class="pt-16">
+        <!-- Hero Section -->
+        <section id="heroSection" class="hero-bg h-screen flex items-center justify-center text-white">
+            <div class="text-center fade-in">
+                <h1 class="text-5xl md:text-7xl font-bold mb-6">Discover India</h1>
+                <p class="text-xl md:text-2xl mb-8">Experience the incredible diversity of India's landscapes and culture</p>
+                
+                <!-- Search Bar -->
+                <div class="max-w-2xl mx-auto mb-8">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Search destinations, cities, or attractions..." 
+                               class="w-full px-6 py-4 text-gray-800 rounded-full text-lg focus:outline-none focus:ring-4 focus:ring-orange-300"
+                               onkeyup="searchDestinations()" onfocus="showSearchResults()">
+                        <button class="absolute right-2 top-2 bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-full">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div id="searchResults" class="absolute z-10 w-full max-w-2xl bg-white rounded-lg shadow-lg mt-2 max-h-60 overflow-y-auto" style="display: none;">
+                        <!-- Search results will appear here -->
+                    </div>
+                </div>
+                
+                <button onclick="requestLocation()" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all">
+                    <i class="fas fa-location-arrow mr-2"></i>Start Your Journey
+                </button>
+            </div>
+        </section>
+
+        <!-- Regions Selection -->
+        <section id="regionsSection" class="py-20 bg-white" style="display: none;">
+            <div class="max-w-7xl mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-4">Choose Your Region</h2>
+                <p class="text-gray-600 text-center mb-12">Explore the diverse regions of India</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- North India -->
+                    <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer" onclick="showRegionPlaces('north')">
+                        <div class="h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                            <i class="fas fa-mountain text-6xl text-white"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">North India</h3>
+                            <p class="text-gray-600">Himalayas, Delhi, Rajasthan</p>
+                        </div>
+                    </div>
+
+                    <!-- South India -->
+                    <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer" onclick="showRegionPlaces('south')">
+                        <div class="h-48 bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
+                            <i class="fas fa-water text-6xl text-white"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">South India</h3>
+                            <p class="text-gray-600">Backwaters, Temples, Beaches</p>
+                        </div>
+                    </div>
+
+                    <!-- East India -->
+                    <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer" onclick="showRegionPlaces('east')">
+                        <div class="h-48 bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center">
+                            <i class="fas fa-sun text-6xl text-white"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">East India</h3>
+                            <p class="text-gray-600">Culture, Tea Gardens, Festivals</p>
+                        </div>
+                    </div>
+
+                    <!-- West India -->
+                    <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer" onclick="showRegionPlaces('west')">
+                        <div class="h-48 bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center">
+                            <i class="fas fa-city text-6xl text-white"></i>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">West India</h3>
+                            <p class="text-gray-600">Mumbai, Goa, Gujarat</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Places Section -->
+        <section id="placesSection" class="py-20 bg-gray-50" style="display: none;">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex items-center mb-8">
+                    <button onclick="showRegions()" class="mr-4 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <h2 class="text-4xl font-bold" id="regionTitle">Places to Visit</h2>
+                </div>
+                <div id="placesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Places will be populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Transport Section -->
+        <section id="transportSection" class="py-20 bg-white" style="display: none;">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center">
+                        <button onclick="goBack()" class="mr-4 text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-arrow-left text-xl"></i>
+                        </button>
+                        <h2 class="text-4xl font-bold">Choose Transport</h2>
+                    </div>
+                    <button onclick="skipTransport()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">
+                        Skip Transport
+                    </button>
+                </div>
+                
+                <div class="space-y-8">
+                    <!-- Flight Options -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-plane text-3xl text-blue-600 mr-4"></i>
+                            <h3 class="text-2xl font-bold">Flight</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-500" onclick="selectTransport('flight', 'economy')">
+                                <h4 class="font-bold text-lg mb-2">Economy</h4>
+                                <p class="text-gray-600 mb-2">Standard seating</p>
+                                <p class="text-xl font-bold text-blue-600" id="flightEconomyPrice">₹8,500</p>
+                            </div>
+                            <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-500" onclick="selectTransport('flight', 'business')">
+                                <h4 class="font-bold text-lg mb-2">Business</h4>
+                                <p class="text-gray-600 mb-2">Premium comfort</p>
+                                <p class="text-xl font-bold text-blue-600" id="flightBusinessPrice">₹18,500</p>
+                            </div>
+                            <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-500" onclick="selectTransport('flight', 'first')">
+                                <h4 class="font-bold text-lg mb-2">First Class</h4>
+                                <p class="text-gray-600 mb-2">Luxury experience</p>
+                                <p class="text-xl font-bold text-blue-600" id="flightFirstPrice">₹35,000</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Train Options -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-train text-3xl text-green-600 mr-4"></i>
+                            <h3 class="text-2xl font-bold">Train</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-green-500" onclick="selectTransport('train', 'sleeper')">
+                                <h4 class="font-bold text-lg mb-2">Sleeper</h4>
+                                <p class="text-gray-600 mb-2">Basic comfort</p>
+                                <p class="text-xl font-bold text-green-600" id="trainSleeperPrice">₹1,500</p>
+                            </div>
+                            <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-green-500" onclick="selectTransport('train', '3ac')">
+                                <h4 class="font-bold text-lg mb-2">3AC</h4>
+                                <p class="text-gray-600 mb-2">Air conditioned</p>
+                                <p class="text-xl font-bold text-green-600" id="train3acPrice">₹2,500</p>
+                            </div>
+                            <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-green-500" onclick="selectTransport('train', '1ac')">
+                                <h4 class="font-bold text-lg mb-2">1AC</h4>
+                                <p class="text-gray-600 mb-2">Premium AC</p>
+                                <p class="text-xl font-bold text-green-600" id="train1acPrice">₹4,500</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bus Options -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-bus text-3xl text-orange-600 mr-4"></i>
+                            <h3 class="text-2xl font-bold">Bus</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-orange-500" onclick="selectTransport('bus', 'regular')">
+                                <h4 class="font-bold text-lg mb-2">Regular</h4>
+                                <p class="text-gray-600 mb-2">Standard seating</p>
+                                <p class="text-xl font-bold text-orange-600" id="busRegularPrice">₹800</p>
+                            </div>
+                            <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-orange-500" onclick="selectTransport('bus', 'ac')">
+                                <h4 class="font-bold text-lg mb-2">AC Sleeper</h4>
+                                <p class="text-gray-600 mb-2">Air conditioned</p>
+                                <p class="text-xl font-bold text-orange-600" id="busAcPrice">₹1,200</p>
+                            </div>
+                            <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-orange-500" onclick="selectTransport('bus', 'luxury')">
+                                <h4 class="font-bold text-lg mb-2">Luxury</h4>
+                                <p class="text-gray-600 mb-2">Premium comfort</p>
+                                <p class="text-xl font-bold text-orange-600" id="busLuxuryPrice">₹2,000</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hotels Section -->
+        <section id="hotelsSection" class="py-20 bg-gray-50" style="display: none;">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex items-center mb-8">
+                    <button onclick="goBack()" class="mr-4 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <h2 class="text-4xl font-bold">Choose Hotel Category</h2>
+                </div>
+
+                <!-- Date Selection -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                    <h3 class="text-xl font-bold mb-4">Select Travel Dates</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Check-in Date</label>
+                            <input type="date" id="checkinDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onchange="calculateDuration()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Check-out Date</label>
+                            <input type="date" id="checkoutDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onchange="calculateDuration()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Duration</label>
+                            <div class="px-4 py-2 bg-gray-100 rounded-lg">
+                                <span id="durationDisplay" class="font-semibold text-blue-600">Select dates</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                    <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer" onclick="showHotelsList('luxury')">
+                        <div class="h-40 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                            <i class="fas fa-crown text-5xl text-white"></i>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold mb-2">7 Star Luxury</h3>
+                            <p class="text-gray-600 mb-3 text-sm">Ultimate luxury experience</p>
+                            <p class="text-xl font-bold text-yellow-600" id="luxuryPrice">₹15,000/night</p>
+                        </div>
+                    </div>
+
+                    <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer" onclick="showHotelsList('premium')">
+                        <div class="h-40 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                            <i class="fas fa-star text-5xl text-white"></i>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold mb-2">5 Star Premium</h3>
+                            <p class="text-gray-600 mb-3 text-sm">Comfort and elegance</p>
+                            <p class="text-xl font-bold text-blue-600" id="premiumPrice">₹8,000/night</p>
+                        </div>
+                    </div>
+
+                    <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer" onclick="showHotelsList('deluxe')">
+                        <div class="h-40 bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center">
+                            <i class="fas fa-bed text-5xl text-white"></i>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold mb-2">Deluxe</h3>
+                            <p class="text-gray-600 mb-3 text-sm">Comfortable and affordable</p>
+                            <p class="text-xl font-bold text-green-600" id="deluxePrice">₹3,500/night</p>
+                        </div>
+                    </div>
+
+                    <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer" onclick="showHotelsList('budget')">
+                        <div class="h-40 bg-gradient-to-br from-red-400 to-pink-500 flex items-center justify-center">
+                            <i class="fas fa-wallet text-5xl text-white"></i>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold mb-2">Budget</h3>
+                            <p class="text-gray-600 mb-3 text-sm">Clean and economical</p>
+                            <p class="text-xl font-bold text-red-600" id="budgetPrice">₹1,200/night</p>
+                        </div>
+                    </div>
+
+                    <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer" onclick="showHotelsList('homestay')">
+                        <div class="h-40 bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center">
+                            <i class="fas fa-home text-5xl text-white"></i>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold mb-2">Homestay</h3>
+                            <p class="text-gray-600 mb-3 text-sm">Local family experience</p>
+                            <p class="text-xl font-bold text-purple-600" id="homestayPrice">₹1,500/night</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hotels List Section -->
+        <section id="hotelsListSection" class="py-20 bg-white" style="display: none;">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex items-center mb-8">
+                    <button onclick="goBack()" class="mr-4 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <h2 class="text-4xl font-bold" id="hotelCategoryTitle">Select Hotel</h2>
+                </div>
+                <div id="hotelsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Hotels will be populated dynamically -->
+                </div>
+                
+                <!-- Proceed Button -->
+                <div id="proceedSection" class="mt-8 text-center" style="display: none;">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold mb-4">Selected Hotel</h3>
+                        <div id="selectedHotelInfo" class="mb-6">
+                            <!-- Selected hotel info will appear here -->
+                        </div>
+                        <button onclick="proceedToExpenses()" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold">
+                            <i class="fas fa-arrow-right mr-2"></i>Proceed to Booking Summary
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expenses Section -->
+        <section id="expensesSection" class="py-20 bg-gray-50" style="display: none;">
+            <div class="max-w-4xl mx-auto px-4">
+                <div class="flex items-center mb-8">
+                    <button onclick="goBack()" class="mr-4 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <h2 class="text-4xl font-bold">Total Expenses</h2>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <div id="expenseBreakdown" class="space-y-4 mb-8">
+                        <!-- Expense breakdown will be populated -->
+                    </div>
+                    
+                    <div class="border-t pt-6">
+                        <div class="flex justify-between items-center text-2xl font-bold">
+                            <span>Total Amount:</span>
+                            <span id="totalAmount" class="text-blue-600">₹0</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="showPayment()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg text-lg font-semibold mt-8">
+                        Proceed to Payment
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payment Section -->
+        <section id="paymentSection" class="py-20 bg-white" style="display: none;">
+            <div class="max-w-2xl mx-auto px-4">
+                <div class="flex items-center mb-8">
+                    <button onclick="goBack()" class="mr-4 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <h2 class="text-4xl font-bold">Payment</h2>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold mb-4">Choose Payment Method</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <button onclick="selectPayment('upi')" class="payment-btn p-4 border-2 border-gray-300 rounded-lg hover:border-blue-500 text-center">
+                                <i class="fas fa-mobile-alt text-2xl text-blue-600 mb-2"></i>
+                                <p class="font-semibold">UPI</p>
+                            </button>
+                            <button onclick="selectPayment('card')" class="payment-btn p-4 border-2 border-gray-300 rounded-lg hover:border-blue-500 text-center">
+                                <i class="fas fa-credit-card text-2xl text-green-600 mb-2"></i>
+                                <p class="font-semibold">Credit/Debit Card</p>
+                            </button>
+                            <button onclick="selectPayment('netbanking')" class="payment-btn p-4 border-2 border-gray-300 rounded-lg hover:border-blue-500 text-center">
+                                <i class="fas fa-university text-2xl text-purple-600 mb-2"></i>
+                                <p class="font-semibold">Net Banking</p>
+                            </button>
+                            <button onclick="selectPayment('wallet')" class="payment-btn p-4 border-2 border-gray-300 rounded-lg hover:border-blue-500 text-center">
+                                <i class="fas fa-wallet text-2xl text-orange-600 mb-2"></i>
+                                <p class="font-semibold">Digital Wallet</p>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="paymentForm" style="display: none;">
+                        <!-- UPI Form -->
+                        <div id="upiForm" class="payment-form" style="display: none;">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">UPI ID</label>
+                                <input type="text" placeholder="yourname@upi" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <!-- Card Form -->
+                        <div id="cardForm" class="payment-form" style="display: none;">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                                    <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                                    <input type="text" placeholder="MM/YY" maxlength="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                                    <input type="password" placeholder="123" maxlength="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
+                                    <input type="text" placeholder="John Doe" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Net Banking Form -->
+                        <div id="netbankingForm" class="payment-form" style="display: none;">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Bank</label>
+                                <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <option>State Bank of India</option>
+                                    <option>HDFC Bank</option>
+                                    <option>ICICI Bank</option>
+                                    <option>Axis Bank</option>
+                                    <option>Punjab National Bank</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Wallet Form -->
+                        <div id="walletForm" class="payment-form" style="display: none;">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Wallet</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <button class="p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 text-center">
+                                        <i class="fab fa-google-pay text-2xl mb-1"></i>
+                                        <p class="text-sm">Google Pay</p>
+                                    </button>
+                                    <button class="p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 text-center">
+                                        <i class="fas fa-mobile-alt text-2xl mb-1"></i>
+                                        <p class="text-sm">PhonePe</p>
+                                    </button>
+                                    <button class="p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 text-center">
+                                        <i class="fas fa-wallet text-2xl mb-1"></i>
+                                        <p class="text-sm">Paytm</p>
+                                    </button>
+                                    <button class="p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 text-center">
+                                        <i class="fas fa-coins text-2xl mb-1"></i>
+                                        <p class="text-sm">Amazon Pay</p>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mb-6">
+                            <p class="text-lg font-semibold">Amount to Pay: <span id="paymentAmount" class="text-blue-600">₹0</span></p>
+                        </div>
+                        
+                        <button onclick="processPayment()" class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg text-lg font-semibold">
+                            Pay Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Section -->
+        <section id="successSection" class="py-20 bg-green-50" style="display: none;">
+            <div class="max-w-2xl mx-auto px-4 text-center">
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <i class="fas fa-check-circle text-6xl text-green-600 mb-6"></i>
+                    <h2 class="text-4xl font-bold text-green-600 mb-4">Payment Successful!</h2>
+                    <p class="text-gray-600 mb-8">Your booking has been confirmed. Have a wonderful trip!</p>
+                    
+                    <div class="space-y-4">
+                        <button onclick="showTripDetails()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold">
+                            <i class="fas fa-map-marked-alt mr-2"></i>View Trip Details
+                        </button>
+                        <button onclick="downloadTicket()" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg font-semibold">
+                            <i class="fas fa-download mr-2"></i>Download Ticket
+                        </button>
+                        <button onclick="resetBooking()" class="w-full border border-blue-600 text-blue-600 py-3 rounded-lg font-semibold hover:bg-blue-50">
+                            Book Another Trip
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trip Details Section -->
+        <section id="tripDetailsSection" class="py-20 bg-white" style="display: none;">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="flex items-center mb-8">
+                    <button onclick="goBack()" class="mr-4 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <h2 class="text-4xl font-bold">Trip Details</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Booking Summary -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-2xl font-bold mb-6">Booking Summary</h3>
+                        <div id="bookingSummary" class="space-y-4">
+                            <!-- Summary will be populated -->
+                        </div>
+                    </div>
+                    
+                    <!-- Map -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-2xl font-bold mb-6">Location & Route</h3>
+                        <div class="bg-gradient-to-br from-blue-100 to-green-100 h-64 rounded-lg flex items-center justify-center relative overflow-hidden">
+                            <!-- Simulated Map -->
+                            <div class="absolute inset-0 opacity-20">
+                                <svg viewBox="0 0 400 300" class="w-full h-full">
+                                    <path d="M50,50 Q100,20 150,50 T250,50 Q300,80 350,50" stroke="#3B82F6" stroke-width="3" fill="none"/>
+                                    <circle cx="50" cy="50" r="8" fill="#EF4444"/>
+                                    <circle cx="350" cy="50" r="8" fill="#10B981"/>
+                                    <circle cx="200" cy="150" r="6" fill="#F59E0B"/>
+                                    <circle cx="120" cy="200" r="6" fill="#8B5CF6"/>
+                                </svg>
+                            </div>
+                            <div class="text-center z-10">
+                                <i class="fas fa-map-marked-alt text-4xl text-blue-600 mb-2"></i>
+                                <p class="text-gray-700 font-semibold mb-4">Trip Route Visualization</p>
+                                <div class="space-y-2">
+                                    <button onclick="openGoogleMaps()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mr-2">
+                                        <i class="fas fa-external-link-alt mr-1"></i>Google Maps
+                                    </button>
+                                    <button onclick="trackTrip()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                                        <i class="fas fa-location-arrow mr-1"></i>Live Tracking
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Route Details -->
+                        <div class="mt-4 space-y-2">
+                            <div class="flex items-center text-sm text-gray-600">
+                                <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                                <span>Starting Point: Your Location</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                                <span>Transit Points: Transport Hubs</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                                <span id="destinationPoint">Destination: Selected Place</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Day-wise Itinerary -->
+                <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-2xl font-bold mb-6">Day-wise Itinerary</h3>
+                    <div id="itinerary" class="space-y-6">
+                        <!-- Itinerary will be populated -->
+                    </div>
+                </div>
+
+                <!-- Feedback Section -->
+                <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-2xl font-bold mb-6">Share Your Feedback</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                            <div class="flex space-x-2">
+                                <button onclick="setRating(1)" class="star-btn text-2xl text-gray-300 hover:text-yellow-500">⭐</button>
+                                <button onclick="setRating(2)" class="star-btn text-2xl text-gray-300 hover:text-yellow-500">⭐</button>
+                                <button onclick="setRating(3)" class="star-btn text-2xl text-gray-300 hover:text-yellow-500">⭐</button>
+                                <button onclick="setRating(4)" class="star-btn text-2xl text-gray-300 hover:text-yellow-500">⭐</button>
+                                <button onclick="setRating(5)" class="star-btn text-2xl text-gray-300 hover:text-yellow-500">⭐</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Comments</label>
+                            <textarea id="feedbackText" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Share your experience..."></textarea>
+                        </div>
+                        <button onclick="submitFeedback()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+                            Submit Feedback
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Login</h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="registerPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onkeyup="validatePassword()">
+                    <div id="passwordStrength" class="mt-2 text-sm">
+                        <div class="space-y-1">
+                            <div id="lengthCheck" class="flex items-center text-red-500">
+                                <i class="fas fa-times mr-2"></i>At least 8 characters
+                            </div>
+                            <div id="upperCheck" class="flex items-center text-red-500">
+                                <i class="fas fa-times mr-2"></i>One uppercase letter
+                            </div>
+                            <div id="lowerCheck" class="flex items-center text-red-500">
+                                <i class="fas fa-times mr-2"></i>One lowercase letter
+                            </div>
+                            <div id="numberCheck" class="flex items-center text-red-500">
+                                <i class="fas fa-times mr-2"></i>One number
+                            </div>
+                            <div id="specialCheck" class="flex items-center text-red-500">
+                                <i class="fas fa-times mr-2"></i>One special character
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold">
+                    Login
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <p class="text-gray-600">Don't have an account? 
+                    <button onclick="showRegister()" class="text-blue-600 hover:text-blue-800 font-semibold">Register here</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Register</h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form onsubmit="handleRegister(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                    <input type="tel" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="registerPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onkeyup="validatePassword()">
+                    <div id="passwordStrength" class="mt-2 text-sm">
+                        <div class="space-y-1">
+                            <div id="lengthCheck" class="flex items-center text-red-500">
+                                <i class="fas fa-times mr-2"></i>At least 8 characters
+                            </div>
+                            <div id="upperCheck" class="flex items-center text-red-500">
+                                <i class="fas fa-times mr-2"></i>One uppercase letter
+                            </div>
+                            <div id="lowerCheck" class="flex items-center text-red-500">
+                                <i class="fas fa-times mr-2"></i>One lowercase letter
+                            </div>
+                            <div id="numberCheck" class="flex items-center text-red-500">
+                                <i class="fas fa-times mr-2"></i>One number
+                            </div>
+                            <div id="specialCheck" class="flex items-center text-red-500">
+                                <i class="fas fa-times mr-2"></i>One special character
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold">
+                    Register
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <p class="text-gray-600">Already have an account? 
+                    <button onclick="showLogin()" class="text-blue-600 hover:text-blue-800 font-semibold">Login here</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Mr.Travel</h4>
+                    <p class="text-gray-400">Discover the beauty and diversity of India with our expertly crafted tour packages.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">Destinations</a></li>
+                        <li><a href="#" class="hover:text-white">Packages</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Contact Info</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><i class="fas fa-phone mr-2"></i>+91 98765 43210</li>
+                        <li><i class="fas fa-envelope mr-2"></i>info@incredibleindiatours.com</li>
+                        <li><i class="fas fa-map-marker-alt mr-2"></i>New Delhi, India</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Follow Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white text-xl"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Mr.Travel. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let currentSection = 'hero';
+        let userLocation = null;
+        let selectedRegion = null;
+        let selectedPlace = null;
+        let selectedTransport = null;
+        let selectedTransportTier = null;
+        let selectedHotelCategory = null;
+        let selectedHotel = null;
+        let selectedDuration = 5;
+        let checkinDate = null;
+        let checkoutDate = null;
+        let isLoggedIn = false;
+        let bookingData = {};
+        let currentRating = 0;
+        let selectedPaymentMethod = null;
+        let allDestinations = [];
+
+        // Places data
+        const placesData = {
+            north: [
+                { name: 'Taj Mahal, Agra', description: 'Wonder of the World', price: 2000, image: '🕌' },
+                { name: 'Red Fort, Delhi', description: 'Mughal Architecture', price: 1500, image: '🏰' },
+                { name: 'Jaipur, Rajasthan', description: 'Pink City', price: 3000, image: '🏛️' },
+                { name: 'Shimla, Himachal', description: 'Hill Station', price: 4000, image: '🏔️' },
+                { name: 'Rishikesh, Uttarakhand', description: 'Yoga Capital', price: 2500, image: '🧘' },
+                { name: 'Amritsar, Punjab', description: 'Golden Temple', price: 2200, image: '⛩️' }
+            ],
+            south: [
+                { name: 'Backwaters, Kerala', description: 'Serene Waters', price: 3500, image: '🛶' },
+                { name: 'Mysore Palace', description: 'Royal Heritage', price: 2000, image: '🏰' },
+                { name: 'Hampi, Karnataka', description: 'Ancient Ruins', price: 2800, image: '🏛️' },
+                { name: 'Ooty, Tamil Nadu', description: 'Queen of Hills', price: 3200, image: '🌄' },
+                { name: 'Goa Beaches', description: 'Coastal Paradise', price: 4000, image: '🏖️' },
+                { name: 'Kochi, Kerala', description: 'Port City', price: 2600, image: '⛵' }
+            ],
+            east: [
+                { name: 'Kolkata, West Bengal', description: 'Cultural Capital', price: 2200, image: '🎭' },
+                { name: 'Darjeeling', description: 'Tea Gardens', price: 3500, image: '🍃' },
+                { name: 'Puri, Odisha', description: 'Jagannath Temple', price: 2500, image: '🛕' },
+                { name: 'Kaziranga, Assam', description: 'Wildlife Sanctuary', price: 4200, image: '🦏' },
+                { name: 'Gangtok, Sikkim', description: 'Mountain Beauty', price: 3800, image: '⛰️' },
+                { name: 'Sundarbans', description: 'Mangrove Forest', price: 3600, image: '🐅' }
+            ],
+            west: [
+                { name: 'Mumbai, Maharashtra', description: 'City of Dreams', price: 3000, image: '🏙️' },
+                { name: 'Goa Beaches', description: 'Beach Paradise', price: 4000, image: '🏖️' },
+                { name: 'Udaipur, Rajasthan', description: 'City of Lakes', price: 3500, image: '🏰' },
+                { name: 'Ajanta Caves', description: 'Ancient Art', price: 2800, image: '🎨' },
+                { name: 'Rann of Kutch', description: 'White Desert', price: 4500, image: '🏜️' },
+                { name: 'Lonavala, Maharashtra', description: 'Hill Station', price: 2400, image: '🌿' }
+            ]
+        };
+
+        // Hotels data
+        const hotelsData = {
+            luxury: [
+                { name: 'The Oberoi Grand', location: 'Premium Location', price: 15000, rating: 5, amenities: ['Spa', 'Pool', 'Fine Dining'], image: '🏨' },
+                { name: 'Taj Palace Hotel', location: 'City Center', price: 18000, rating: 5, amenities: ['Butler Service', 'Gym', 'Business Center'], image: '🏛️' },
+                { name: 'Leela Palace', location: 'Luxury District', price: 20000, rating: 5, amenities: ['Royal Suite', 'Concierge', 'Valet'], image: '👑' },
+                { name: 'Four Seasons Resort', location: 'Exclusive Area', price: 22000, rating: 5, amenities: ['Private Beach', 'Helicopter Service', 'Personal Chef'], image: '🌟' }
+            ],
+            premium: [
+                { name: 'Radisson Blu', location: 'Business District', price: 8000, rating: 4, amenities: ['Pool', 'Gym', 'Restaurant'], image: '🏢' },
+                { name: 'Hyatt Regency', location: 'Downtown', price: 9500, rating: 4, amenities: ['Spa', 'Conference Hall', 'Bar'], image: '🏨' },
+                { name: 'Marriott Hotel', location: 'Central Area', price: 8500, rating: 4, amenities: ['Fitness Center', 'Room Service', 'WiFi'], image: '🏪' },
+                { name: 'Hilton Garden Inn', location: 'Airport Area', price: 7500, rating: 4, amenities: ['Airport Shuttle', 'Business Center', 'Pool'], image: '✈️' },
+                { name: 'Courtyard by Marriott', location: 'Tech Park', price: 7800, rating: 4, amenities: ['Modern Rooms', 'Bistro', 'Gym'], image: '🏙️' }
+            ],
+            deluxe: [
+                { name: 'Hotel Comfort Inn', location: 'Tourist Area', price: 3500, rating: 3, amenities: ['Restaurant', 'WiFi', 'AC'], image: '🏨' },
+                { name: 'Royal Guest House', location: 'Heritage Area', price: 4000, rating: 3, amenities: ['Garden', 'Parking', 'Breakfast'], image: '🏡' },
+                { name: 'City Plaza Hotel', location: 'Market Area', price: 3200, rating: 3, amenities: ['24/7 Service', 'Laundry', 'Travel Desk'], image: '🏬' },
+                { name: 'Grand Heritage Hotel', location: 'Old City', price: 3800, rating: 3, amenities: ['Traditional Decor', 'Rooftop Restaurant', 'Cultural Shows'], image: '🏰' },
+                { name: 'Green Valley Resort', location: 'Nature Area', price: 3600, rating: 3, amenities: ['Garden View', 'Outdoor Activities', 'Organic Food'], image: '🌿' }
+            ],
+            budget: [
+                { name: 'Backpacker Hostel', location: 'Backpacker Area', price: 800, rating: 2, amenities: ['Shared Kitchen', 'WiFi', 'Lockers'], image: '🎒' },
+                { name: 'Youth Hostel', location: 'Student Quarter', price: 1000, rating: 2, amenities: ['Dormitory', 'Common Area', 'Breakfast'], image: '🏠' },
+                { name: 'Budget Inn', location: 'Railway Station', price: 1200, rating: 2, amenities: ['Basic AC', 'TV', 'Room Service'], image: '🚂' },
+                { name: 'Traveler Lodge', location: 'Bus Stand', price: 1500, rating: 2, amenities: ['Clean Rooms', 'Hot Water', 'Parking'], image: '🚌' },
+                { name: 'Economy Hotel', location: 'Market Area', price: 1800, rating: 3, amenities: ['AC Rooms', 'Restaurant', 'WiFi'], image: '💰' },
+                { name: 'Simple Stay', location: 'Residential Area', price: 2000, rating: 3, amenities: ['Family Rooms', 'Kitchen Access', 'Laundry'], image: '🏘️' }
+            ],
+            homestay: [
+                { name: 'Local Family Homestay', location: 'Residential Area', price: 1200, rating: 3, amenities: ['Home Cooked Meals', 'Local Experience', 'Family Interaction'], image: '🏡' },
+                { name: 'Traditional House Stay', location: 'Heritage Area', price: 1500, rating: 3, amenities: ['Cultural Experience', 'Traditional Food', 'Local Guide'], image: '🏘️' },
+                { name: 'Farm Stay Experience', location: 'Rural Area', price: 1800, rating: 3, amenities: ['Farm Activities', 'Organic Meals', 'Nature Walks'], image: '🚜' },
+                { name: 'Village Homestay', location: 'Village Center', price: 1000, rating: 2, amenities: ['Village Life', 'Simple Meals', 'Cultural Activities'], image: '🌾' },
+                { name: 'Heritage Homestay', location: 'Old Town', price: 2200, rating: 3, amenities: ['Historical Building', 'Antique Decor', 'Storytelling'], image: '🏛️' }
+            ]
+        };
+
+        // Location and pricing functions
+        function requestLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        showRegions();
+                    },
+                    (error) => {
+                        console.log('Location access denied, using default pricing');
+                        showRegions();
+                    }
+                );
+            } else {
+                showRegions();
+            }
+        }
+
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function updateTransportPrices() {
+            if (!userLocation || !selectedPlace) return;
+            
+            // Sample coordinates for places (in real app, these would be from a database)
+            const placeCoords = { lat: 28.6139, lng: 77.2090 }; // Default to Delhi
+            const distance = calculateDistance(userLocation.lat, userLocation.lng, placeCoords.lat, placeCoords.lng);
+            
+            // Calculate prices based on distance
+            const basePrices = { flight: 8500, train: 2500, bus: 1200 };
+            const multiplier = Math.max(1, distance / 1000);
+            
+            document.getElementById('flightPrice').textContent = `₹${Math.round(basePrices.flight * multiplier)}`;
+            document.getElementById('trainPrice').textContent = `₹${Math.round(basePrices.train * multiplier)}`;
+            document.getElementById('busPrice').textContent = `₹${Math.round(basePrices.bus * multiplier)}`;
+        }
+
+        // Navigation functions
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+            currentSection = sectionId.replace('Section', '');
+            
+            // Scroll to top when changing sections
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showRegions() {
+            showSection('regionsSection');
+        }
+
+        function showRegionPlaces(region) {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            
+            selectedRegion = region;
+            const places = placesData[region];
+            const placesGrid = document.getElementById('placesGrid');
+            const regionTitle = document.getElementById('regionTitle');
+            
+            regionTitle.textContent = `${region.charAt(0).toUpperCase() + region.slice(1)} India - Places to Visit`;
+            
+            placesGrid.innerHTML = places.map(place => `
+                <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer" onclick="selectPlace('${place.name}')">
+                    <div class="h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-6xl">
+                        ${place.image}
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">${place.name}</h3>
+                        <p class="text-gray-600 mb-4">${place.description}</p>
+                        <p class="text-lg font-bold text-blue-600">Starting from ₹${place.price}</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            showSection('placesSection');
+        }
+
+        function selectPlace(placeName) {
+            selectedPlace = placeName;
+            updateTransportPrices();
+            showSection('transportSection');
+        }
+
+        // Search functionality
+        function initializeDestinations() {
+            allDestinations = [];
+            Object.keys(placesData).forEach(region => {
+                placesData[region].forEach(place => {
+                    allDestinations.push({
+                        name: place.name,
+                        region: region,
+                        description: place.description,
+                        price: place.price
+                    });
+                });
+            });
+        }
+
+        function searchDestinations() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const searchResults = document.getElementById('searchResults');
+            
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+            
+            const filtered = allDestinations.filter(dest => 
+                dest.name.toLowerCase().includes(query) || 
+                dest.description.toLowerCase().includes(query) ||
+                dest.region.toLowerCase().includes(query)
+            );
+            
+            if (filtered.length > 0) {
+                searchResults.innerHTML = filtered.map(dest => `
+                    <div class="p-3 hover:bg-gray-100 cursor-pointer border-b" onclick="selectSearchResult('${dest.name}', '${dest.region}')">
+                        <div class="font-semibold text-gray-800">${dest.name}</div>
+                        <div class="text-sm text-gray-600">${dest.description} - ${dest.region.charAt(0).toUpperCase() + dest.region.slice(1)} India</div>
+                        <div class="text-sm text-blue-600">Starting from ₹${dest.price}</div>
+                    </div>
+                `).join('');
+                searchResults.style.display = 'block';
+            } else {
+                searchResults.innerHTML = '<div class="p-3 text-gray-500">No destinations found</div>';
+                searchResults.style.display = 'block';
+            }
+        }
+
+        function showSearchResults() {
+            const query = document.getElementById('searchInput').value;
+            if (query.length >= 2) {
+                searchDestinations();
+            }
+        }
+
+        function selectSearchResult(placeName, region) {
+            if (!isLoggedIn) {
+                showLogin();
+                return;
+            }
+            selectedRegion = region;
+            selectedPlace = placeName;
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('searchInput').value = placeName;
+            updateTransportPrices();
+            showSection('transportSection');
+        }
+
+        // Date calculation
+        function calculateDuration() {
+            const checkin = document.getElementById('checkinDate').value;
+            const checkout = document.getElementById('checkoutDate').value;
+            
+            if (checkin && checkout) {
+                const checkinDate = new Date(checkin);
+                const checkoutDate = new Date(checkout);
+                const timeDiff = checkoutDate.getTime() - checkinDate.getTime();
+                const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                
+                if (dayDiff > 0) {
+                    selectedDuration = dayDiff;
+                    document.getElementById('durationDisplay').textContent = `${dayDiff} days`;
+                    updateHotelPrices();
+                } else {
+                    document.getElementById('durationDisplay').textContent = 'Invalid dates';
+                }
+            }
+        }
+
+        function selectTransport(transport, tier) {
+            selectedTransport = transport;
+            selectedTransportTier = tier;
+            
+            // Highlight selected option
+            document.querySelectorAll('.border-2').forEach(el => {
+                el.classList.remove('border-blue-500', 'border-green-500', 'border-orange-500', 'bg-blue-50', 'bg-green-50', 'bg-orange-50');
+                el.classList.add('border-gray-200');
+            });
+            
+            event.target.closest('.border-2').classList.remove('border-gray-200');
+            if (transport === 'flight') {
+                event.target.closest('.border-2').classList.add('border-blue-500', 'bg-blue-50');
+            } else if (transport === 'train') {
+                event.target.closest('.border-2').classList.add('border-green-500', 'bg-green-50');
+            } else {
+                event.target.closest('.border-2').classList.add('border-orange-500', 'bg-orange-50');
+            }
+            
+            setTimeout(() => {
+                showSection('hotelsSection');
+            }, 500);
+        }
+
+        function skipTransport() {
+            selectedTransport = null;
+            showSection('hotelsSection');
+        }
+
+        function selectDuration(days) {
+            selectedDuration = days;
+            document.querySelectorAll('.duration-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-50');
+                btn.classList.add('border-gray-300');
+            });
+            event.target.classList.remove('border-gray-300');
+            event.target.classList.add('border-blue-500', 'bg-blue-50');
+            
+            // Update hotel prices based on duration
+            updateHotelPrices();
+        }
+
+        function updateHotelPrices() {
+            document.getElementById('luxuryPrice').textContent = `₹15,000/night`;
+            document.getElementById('premiumPrice').textContent = `₹8,000/night`;
+            document.getElementById('deluxePrice').textContent = `₹3,500/night`;
+            document.getElementById('budgetPrice').textContent = `₹1,200/night`;
+            document.getElementById('homestayPrice').textContent = `₹1,500/night`;
+        }
+
+        function showHotelsList(category) {
+            selectedHotelCategory = category;
+            const hotels = hotelsData[category];
+            const hotelsList = document.getElementById('hotelsList');
+            const categoryTitle = document.getElementById('hotelCategoryTitle');
+            
+            const categoryNames = {
+                luxury: '7 Star Luxury Hotels',
+                premium: '5 Star Premium Hotels',
+                deluxe: 'Deluxe Hotels',
+                budget: 'Budget Hotels',
+                homestay: 'Homestay Options'
+            };
+            
+            categoryTitle.textContent = categoryNames[category];
+            
+            // Hide proceed section initially
+            document.getElementById('proceedSection').style.display = 'none';
+            
+            hotelsList.innerHTML = hotels.map((hotel, index) => `
+                <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-blue-500 hotel-option" onclick="selectHotelOption(${index}, '${category}')">
+                    <div class="h-48 bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-6xl">
+                        ${hotel.image}
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">${hotel.name}</h3>
+                        <p class="text-gray-600 mb-2">${hotel.location}</p>
+                        <div class="flex items-center mb-2">
+                            ${'⭐'.repeat(hotel.rating)}
+                            <span class="ml-2 text-sm text-gray-600">(${hotel.rating}/5)</span>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-1">Amenities:</p>
+                            <div class="flex flex-wrap gap-1">
+                                ${hotel.amenities.map(amenity => `<span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">${amenity}</span>`).join('')}
+                            </div>
+                        </div>
+                        <p class="text-2xl font-bold text-blue-600">₹${hotel.price}/night</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            showSection('hotelsListSection');
+        }
+
+        function selectHotelOption(hotelIndex, category) {
+            selectedHotel = hotelsData[category][hotelIndex];
+            selectedHotelCategory = category;
+            
+            // Highlight selected hotel
+            document.querySelectorAll('.hotel-option').forEach(hotel => {
+                hotel.classList.remove('border-blue-500', 'bg-blue-50');
+                hotel.classList.add('border-transparent');
+            });
+            
+            event.target.closest('.hotel-option').classList.remove('border-transparent');
+            event.target.closest('.hotel-option').classList.add('border-blue-500', 'bg-blue-50');
+            
+            // Show selected hotel info
+            const selectedHotelInfo = document.getElementById('selectedHotelInfo');
+            selectedHotelInfo.innerHTML = `
+                <div class="flex items-center justify-center space-x-4">
+                    <div class="text-4xl">${selectedHotel.image}</div>
+                    <div class="text-left">
+                        <h4 class="text-lg font-bold">${selectedHotel.name}</h4>
+                        <p class="text-gray-600">${selectedHotel.location}</p>
+                        <p class="text-blue-600 font-semibold">₹${selectedHotel.price}/night × ${selectedDuration} nights</p>
+                        <p class="text-lg font-bold text-green-600">Total: ₹${(selectedHotel.price * selectedDuration).toLocaleString()}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Show proceed section
+            document.getElementById('proceedSection').style.display = 'block';
+            
+            // Scroll to proceed section
+            document.getElementById('proceedSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function proceedToExpenses() {
+            calculateExpenses();
+            showSection('expensesSection');
+            // Scroll to top of the page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectHotel(hotelIndex, category) {
+            selectedHotel = hotelsData[category][hotelIndex];
+            calculateExpenses();
+            showSection('expensesSection');
+        }
+
+        function calculateExpenses() {
+            const expenses = [];
+            let total = 0;
+            
+            // Place entry fee
+            const placeData = placesData[selectedRegion].find(p => p.name === selectedPlace);
+            if (placeData) {
+                expenses.push({ item: 'Place Entry Fee', amount: placeData.price });
+                total += placeData.price;
+            }
+            
+            // Transport
+            if (selectedTransport) {
+                const transportPrices = {
+                    flight: parseInt(document.getElementById('flightPrice').textContent.replace('₹', '').replace(',', '')),
+                    train: parseInt(document.getElementById('trainPrice').textContent.replace('₹', '').replace(',', '')),
+                    bus: parseInt(document.getElementById('busPrice').textContent.replace('₹', '').replace(',', ''))
+                };
+                expenses.push({ item: `${selectedTransport.charAt(0).toUpperCase() + selectedTransport.slice(1)} (Round Trip)`, amount: transportPrices[selectedTransport] * 2 });
+                total += transportPrices[selectedTransport] * 2;
+            }
+            
+            // Hotel
+            if (selectedHotel) {
+                const hotelTotal = selectedHotel.price * selectedDuration;
+                expenses.push({ item: `${selectedHotel.name} (${selectedDuration} nights)`, amount: hotelTotal });
+                total += hotelTotal;
+            }
+            
+            // Meals
+            const mealCost = selectedDuration * 1500;
+            expenses.push({ item: `Meals (${selectedDuration} days)`, amount: mealCost });
+            total += mealCost;
+            
+            // Local transport
+            const localTransport = selectedDuration * 800;
+            expenses.push({ item: `Local Transport (${selectedDuration} days)`, amount: localTransport });
+            total += localTransport;
+            
+            // Display expenses
+            const expenseBreakdown = document.getElementById('expenseBreakdown');
+            expenseBreakdown.innerHTML = expenses.map(expense => `
+                <div class="flex justify-between items-center py-2 border-b">
+                    <span class="text-gray-700">${expense.item}</span>
+                    <span class="font-semibold">₹${expense.amount.toLocaleString()}</span>
+                </div>
+            `).join('');
+            
+            document.getElementById('totalAmount').textContent = `₹${total.toLocaleString()}`;
+            document.getElementById('paymentAmount').textContent = `₹${total.toLocaleString()}`;
+            
+            // Store booking data
+            bookingData = {
+                region: selectedRegion,
+                place: selectedPlace,
+                transport: selectedTransport,
+                hotel: selectedHotel,
+                duration: selectedDuration,
+                expenses: expenses,
+                total: total
+            };
+        }
+
+        function showPayment() {
+            showSection('paymentSection');
+        }
+
+        function selectPayment(method) {
+            selectedPaymentMethod = method;
+            
+            document.querySelectorAll('.payment-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-50');
+                btn.classList.add('border-gray-300');
+            });
+            event.target.classList.remove('border-gray-300');
+            event.target.classList.add('border-blue-500', 'bg-blue-50');
+            
+            // Hide all payment forms
+            document.querySelectorAll('.payment-form').forEach(form => {
+                form.style.display = 'none';
+            });
+            
+            // Show selected payment form
+            document.getElementById(method + 'Form').style.display = 'block';
+            document.getElementById('paymentForm').style.display = 'block';
+        }
+
+        function processPayment() {
+            // Simulate payment processing
+            setTimeout(() => {
+                showSection('successSection');
+            }, 2000);
+        }
+
+        function showTripDetails() {
+            // Populate booking summary
+            const bookingSummary = document.getElementById('bookingSummary');
+            bookingSummary.innerHTML = `
+                <div class="space-y-3">
+                    <div><strong>Destination:</strong> ${bookingData.place}</div>
+                    <div><strong>Region:</strong> ${bookingData.region.charAt(0).toUpperCase() + bookingData.region.slice(1)} India</div>
+                    <div><strong>Duration:</strong> ${bookingData.duration} days</div>
+                    ${bookingData.transport ? `<div><strong>Transport:</strong> ${bookingData.transport.charAt(0).toUpperCase() + bookingData.transport.slice(1)}</div>` : ''}
+                    ${bookingData.hotel ? `<div><strong>Hotel:</strong> ${bookingData.hotel.name}</div>` : ''}
+                    <div><strong>Total Cost:</strong> ₹${bookingData.total.toLocaleString()}</div>
+                </div>
+            `;
+            
+            // Generate itinerary
+            const itinerary = document.getElementById('itinerary');
+            const itineraryItems = [];
+            
+            for (let day = 1; day <= bookingData.duration; day++) {
+                let activities = [];
+                if (day === 1) {
+                    activities = ['Arrival and check-in', 'Local area exploration', 'Welcome dinner'];
+                } else if (day === bookingData.duration) {
+                    activities = ['Final sightseeing', 'Shopping for souvenirs', 'Departure'];
+                } else {
+                    activities = ['Morning sightseeing', 'Local cuisine experience', 'Cultural activities'];
+                }
+                
+                itineraryItems.push(`
+                    <div class="border-l-4 border-blue-500 pl-6 pb-6">
+                        <h4 class="text-lg font-bold mb-2">Day ${day}</h4>
+                        <ul class="space-y-1">
+                            ${activities.map(activity => `<li class="text-gray-600">• ${activity}</li>`).join('')}
+                        </ul>
+                    </div>
+                `);
+            }
+            
+            itinerary.innerHTML = itineraryItems.join('');
+            showSection('tripDetailsSection');
+        }
+
+        // Password validation
+        function validatePassword() {
+            const password = document.getElementById('registerPassword').value;
+            const checks = {
+                length: password.length >= 8,
+                upper: /[A-Z]/.test(password),
+                lower: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+            
+            Object.keys(checks).forEach(check => {
+                const element = document.getElementById(check + 'Check');
+                const icon = element.querySelector('i');
+                if (checks[check]) {
+                    element.classList.remove('text-red-500');
+                    element.classList.add('text-green-500');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-check');
+                } else {
+                    element.classList.remove('text-green-500');
+                    element.classList.add('text-red-500');
+                    icon.classList.remove('fa-check');
+                    icon.classList.add('fa-times');
+                }
+            });
+        }
+
+        function trackTrip() {
+            alert('Live tracking activated! You will receive real-time updates about your trip progress.');
+        }
+
+        function openGoogleMaps() {
+            const destination = encodeURIComponent(bookingData.place);
+            const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+            window.open(url, '_blank');
+        }
+
+        function downloadTicket() {
+            // Create comprehensive ticket content
+            const ticketContent = `
+                MR.TRAVEL - BOOKING CONFIRMATION & E-TICKET
+                ==========================================
+                
+                🎫 BOOKING DETAILS
+                Booking ID: MT${Date.now()}
+                Booking Date: ${new Date().toLocaleDateString()}
+                
+                📍 DESTINATION INFORMATION
+                Destination: ${bookingData.place}
+                Region: ${bookingData.region.charAt(0).toUpperCase() + bookingData.region.slice(1)} India
+                Duration: ${bookingData.duration} days
+                Check-in: ${checkinDate || 'Not specified'}
+                Check-out: ${checkoutDate || 'Not specified'}
+                
+                🚗 TRANSPORT DETAILS
+                ${bookingData.transport ? `Mode: ${bookingData.transport.charAt(0).toUpperCase() + bookingData.transport.slice(1)}` : 'Transport: Not selected'}
+                ${bookingData.transportTier ? `Class: ${bookingData.transportTier.charAt(0).toUpperCase() + bookingData.transportTier.slice(1)}` : ''}
+                
+                🏨 ACCOMMODATION
+                ${bookingData.hotel ? `Hotel: ${bookingData.hotel.name}` : 'Hotel: Not selected'}
+                ${bookingData.hotel ? `Category: ${bookingData.hotelCategory}` : ''}
+                ${bookingData.hotel ? `Price per night: ₹${bookingData.hotel.price}` : ''}
+                
+                💰 PAYMENT SUMMARY
+                ${bookingData.expenses ? bookingData.expenses.map(exp => `${exp.item}: ₹${exp.amount.toLocaleString()}`).join('\n                ') : ''}
+                
+                TOTAL AMOUNT PAID: ₹${bookingData.total ? bookingData.total.toLocaleString() : '0'}
+                Payment Method: ${selectedPaymentMethod ? selectedPaymentMethod.toUpperCase() : 'Not specified'}
+                
+                📞 CONTACT INFORMATION
+                Customer Support: +91 98765 43210
+                Email: support@mrtravel.com
+                Website: www.mrtravel.com
+                
+                🗺️ IMPORTANT NOTES
+                - Please carry a valid ID proof during travel
+                - Arrive at departure point 30 minutes early
+                - For any changes, contact us 24 hours in advance
+                - Emergency helpline: +91 98765 43210
+                
+                Thank you for choosing Mr.Travel!
+                Have a wonderful journey! 🌟
+            `;
+            
+            const blob = new Blob([ticketContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mr-travel-ticket-${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function resetBooking() {
+            selectedRegion = null;
+            selectedPlace = null;
+            selectedTransport = null;
+            selectedHotelCategory = null;
+            selectedHotel = null;
+            selectedDuration = 5;
+            bookingData = {};
+            showSection('regionsSection');
+        }
+
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('.star-btn');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('text-yellow-500');
+                    star.classList.remove('text-gray-300');
+                } else {
+                    star.classList.add('text-gray-300');
+                    star.classList.remove('text-yellow-500');
+                }
+            });
+        }
+
+        function submitFeedback() {
+            const feedbackText = document.getElementById('feedbackText').value;
+            if (currentRating === 0) {
+                alert('Please select a rating');
+                return;
+            }
+            
+            alert(`Thank you for your ${currentRating}-star feedback! We appreciate your input.`);
+            document.getElementById('feedbackText').value = '';
+            setRating(0);
+        }
+
+        function goBack() {
+            const sections = ['hero', 'regions', 'places', 'transport', 'hotels', 'hotelsList', 'expenses', 'payment', 'success', 'tripDetails'];
+            const currentIndex = sections.indexOf(currentSection);
+            
+            if (currentIndex > 0) {
+                const previousSection = sections[currentIndex - 1];
+                if (previousSection === 'hotelsList' && currentSection === 'expenses') {
+                    showSection('hotelsListSection');
+                } else if (previousSection === 'hotels' && currentSection === 'hotelsList') {
+                    showSection('hotelsSection');
+                } else {
+                    showSection(previousSection + 'Section');
+                }
+            }
+        }
+
+        // Modal functions
+        function showLogin() {
+            closeModal();
+            document.getElementById('loginModal').classList.add('show');
+        }
+
+        function showRegister() {
+            closeModal();
+            document.getElementById('registerModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('show');
+            });
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            isLoggedIn = true;
+            closeModal();
+            alert('Login successful! Welcome to Incredible India Tours.');
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            isLoggedIn = true;
+            closeModal();
+            alert('Registration successful! Welcome to Incredible India Tours.');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            updateHotelPrices();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9806a55bb51c84aa',t:'MTc1ODA5MTU4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
